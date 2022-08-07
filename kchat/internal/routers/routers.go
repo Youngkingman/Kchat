@@ -51,6 +51,7 @@ func NewRouter() *gin.Engine {
 		// // 获取文章列表
 		// apiv1.GET("/articles", article.List)
 	}
+	// websocket相关路由
 
 	return r
 }
