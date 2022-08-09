@@ -1,7 +1,9 @@
 package global
 
-import "gorm.io/gorm"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 var (
-	DBEngine *gorm.DB
+	MySQL *sqlx.DB
 )

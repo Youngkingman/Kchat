@@ -52,6 +52,10 @@ func NewRouter() *gin.Engine {
 		// apiv1.GET("/articles", article.List)
 	}
 	// websocket相关路由
+	ws := r.Group("/ws/v1")
+	ws.Use()
+	{
 
+	}
 	return r
 }
