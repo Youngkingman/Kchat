@@ -32,6 +32,7 @@ func (v ValidErrors) Errors() []string {
 	return errs
 }
 
+// 处理请求的数据绑定用这个
 func BindAndValid(c *gin.Context, v interface{}) (bool, ValidErrors) {
 	var errs ValidErrors
 	err := c.ShouldBind(v)

@@ -17,6 +17,7 @@ func NewResponse(ctx *gin.Context) *Response {
 	}
 }
 
+// 带数据的response
 func (r *Response) ToResponse(data interface{}) {
 	if data == nil {
 		data = gin.H{}
@@ -24,6 +25,7 @@ func (r *Response) ToResponse(data interface{}) {
 	r.Ctx.JSON(http.StatusOK, data)
 }
 
+// 出错的response
 func (r *Response) ToErrorResponse(err *errcode.Error) {
 	response := gin.H{"code": err.Code(), "msg": err.Msg()}
 	details := err.Details()

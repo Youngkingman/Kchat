@@ -2,6 +2,8 @@ package routers
 
 import (
 	"github.com/Youngkingman/Kchat/kchat/global"
+	"github.com/Youngkingman/Kchat/kchat/internal/controller"
+	"github.com/Youngkingman/Kchat/kchat/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,9 +19,9 @@ func NewRouter() *gin.Engine {
 
 	// r.Use(middleware.Tracing())
 	// r.Use(middleware.RateLimiter(methodLimiters))
-	// r.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
-	// r.Use(middleware.Translations())
-
+	r.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
+	r.Use(middleware.Translations())
+	r.GET("/me", controller.Me)
 	// article := v1.NewArticle()
 	// tag := v1.NewTag()
 	// upload := api.NewUpload()
@@ -39,17 +41,6 @@ func NewRouter() *gin.Engine {
 		// apiv1.PUT("/tags/:id", tag.Update)
 		// // 获取标签列表
 		// apiv1.GET("/tags", tag.List)
-
-		// // 创建文章
-		// apiv1.POST("/articles", article.Create)
-		// // 删除指定文章
-		// apiv1.DELETE("/articles/:id", article.Delete)
-		// // 更新指定文章
-		// apiv1.PUT("/articles/:id", article.Update)
-		// // 获取指定文章
-		// apiv1.GET("/articles/:id", article.Get)
-		// // 获取文章列表
-		// apiv1.GET("/articles", article.List)
 	}
 	// websocket相关路由
 	ws := r.Group("/ws/v1")

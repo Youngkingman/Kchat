@@ -18,6 +18,7 @@ func EncodeMD5(value string) string {
 	return hex.EncodeToString(m.Sum(nil))
 }
 
+// 不是什么敏感信息简单混杂一下
 func EncodeUID(uid int) (ret string) {
 	uidStr := strconv.Itoa(uid)
 	ToEncode := fmt.Sprintf("%s.%s", uidStr, global.AppSetting.UidSalt)
