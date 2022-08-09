@@ -14,7 +14,7 @@ import (
 )
 
 // 初始化sql链接，幂等操作，仅仅连接一次
-func New(config *setting.DatabaseSettingS) (db *sqlx.DB, err error) {
+func NewSQL(config *setting.DatabaseSettingS) (db *sqlx.DB, err error) {
 	var dbonce sync.Once
 	dbonce.Do(func() {
 		// ："用户名:密码@tcp(IP:端口)/数据库?charset=utf8"
@@ -38,6 +38,11 @@ func New(config *setting.DatabaseSettingS) (db *sqlx.DB, err error) {
 			db.Mapper = reflectx.NewMapperFunc("json", strings.ToLower)
 		}
 	})
+
+	// Verify database connection is working
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("error connecting to db: %w", err)
+	}
 
 	return
 }

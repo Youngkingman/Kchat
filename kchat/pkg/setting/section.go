@@ -22,6 +22,7 @@ type AppSettingS struct {
 	UploadServerUrl       string
 	UploadImageMaxSize    int
 	UploadImageAllowExts  []string
+	UidSalt               string
 }
 
 type EmailSettingS struct {
@@ -51,6 +52,9 @@ type DatabaseSettingS struct {
 	ParseTime    bool
 	MaxIdleConns int
 	MaxOpenConns int
+}
+
+type RedisSettings struct {
 }
 
 var sections = make(map[string]interface{})
