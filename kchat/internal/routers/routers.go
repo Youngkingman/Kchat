@@ -21,6 +21,7 @@ func NewRouter() *gin.Engine {
 	// r.Use(middleware.RateLimiter(methodLimiters))
 	//测试接口，证明跑通了sql
 	r.GET("/me", controller.Me)
+	r.GET("/me-redis", controller.MeRedis)
 	g := r.Group("/home")
 	g.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
 	g.Use(middleware.Translations())

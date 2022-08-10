@@ -57,6 +57,10 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
+	err = s.ReadSection("Redis", &global.RedisSetting)
+	if err != nil {
+		return err
+	}
 
 	global.AppSetting.DefaultContextTimeout *= time.Second
 	global.JWTSetting.Expire *= time.Second
@@ -87,6 +91,10 @@ func setupLogger() error {
 func setupDBEngine() error {
 	var err error
 	global.MySQL, err = dbutil.NewSQL(global.DatabaseSetting)
+	if err != nil {
+		return err
+	}
+	global.Redis, err = dbutil.NewRedisCli(global.RedisSetting)
 	if err != nil {
 		return err
 	}

@@ -56,7 +56,6 @@ type DatabaseSettingS struct {
 
 type RedisSettingS struct {
 	Host       string
-	Port       int
 	Auth       string
 	Db         int
 	MaxRetries int

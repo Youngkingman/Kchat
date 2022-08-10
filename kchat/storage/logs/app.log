@@ -13,3 +13,4 @@
 2022/08/10 16:55:52 {"callers":["E:/Kchat/kchat/initSetting.go: 114 main.InitSetting"],"level":"debug","message":"SELECT * FROM kchat_user WHERE uid=?","time":1660121752564290400}
 2022/08/10 16:55:52 {"callers":["E:/Kchat/kchat/initSetting.go: 114 main.InitSetting"],"level":"debug","message":"Unable to find user: 1\nmissing destination name password in *model.User","span_id":"no","time":1660121752565864600,"trace_id":"no"}
 2022/08/10 16:56:34 {"callers":["E:/Kchat/kchat/initSetting.go: 114 main.InitSetting"],"level":"debug","message":"SELECT * FROM kchat_user WHERE uid=?","time":1660121794115802900}
+2022/08/10 21:12:16 {"callers":["E:/Kchat/kchat/initSetting.go: 121 main.InitSetting"],"level":"debug","message":"Unable to find key in Redis: ","span_id":"no","time":1660137136664744000,"trace_id":"no"}

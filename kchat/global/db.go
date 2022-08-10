@@ -7,5 +7,5 @@ import (
 
 var (
 	MySQL *sqlx.DB
-	Redis dbutil.RedisCli
+	Redis *dbutil.RedisCli
 )

@@ -10,17 +10,6 @@ import (
 	redis "github.com/go-redis/redis"
 )
 
-//Config redis的配置文件
-type Config struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	Auth     string `json:"auth"`
-	Db       int    `json:"db"`
-	PoolSize int    `json:"poolSize"`
-}
-
-var config Config
-
 var redisOnce sync.Once
 
 type RedisCli struct {
@@ -30,15 +19,19 @@ type RedisCli struct {
 //ErrKeyNotExists not exists
 var ErrKeyNotExists = redis.Nil
 
-func NewRedisCli(config setting.RedisSettingS) (*RedisCli, error) {
+func NewRedisCli(config *setting.RedisSettingS) (*RedisCli, error) {
 	var client *redis.Client
 	redisOnce.Do(func() {
 		client = redis.NewClient(&redis.Options{
-			Addr:       fmt.Sprintf("%s:%d", config.Host, config.Port),
+			Addr:       fmt.Sprintf("%s", config.Host),
 			Password:   config.Auth,
 			DB:         config.Db,
 			MaxRetries: 2,
 			PoolSize:   config.PoolSize,
+			// 不想配了
+			ReadTimeout:  time.Millisecond * time.Duration(500),
+			WriteTimeout: time.Millisecond * time.Duration(500),
+			IdleTimeout:  time.Second * time.Duration(60),
 		})
 	})
 	_, err := client.Ping().Result()

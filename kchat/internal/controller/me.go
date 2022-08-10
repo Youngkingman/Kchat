@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/Youngkingman/Kchat/kchat/global"
@@ -11,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 一个没啥用的测试接口，正常一个前端传过来一个user的混杂uidStr后端解码之后
 func Me(c *gin.Context) {
 	// A *model.User will eventually be added to context in middleware
 	//user, exists := c.Get("user")
@@ -28,7 +26,6 @@ func Me(c *gin.Context) {
 	u, err := model.GetUser(c.Request.Context(), uid)
 
 	if err != nil {
-		log.Printf("Unable to find user: %v\n%v", uid, err)
 		global.Logger.Debugf(c, "Unable to find user: %v\n%v", uid, err)
 		req.ToErrorResponse(errcode.ErrorGetUserInfoFail)
 
@@ -36,4 +33,16 @@ func Me(c *gin.Context) {
 	}
 	u.Password = "" //因为懒得写db字段，于是就这样吧
 	req.ToResponse(u)
+}
+
+func MeRedis(c *gin.Context) {
+	req := app.NewResponse(c)
+	key := c.Query("key")
+	val, err := global.Redis.Get(key)
+	if err != nil {
+		global.Logger.Debugf(c, "Unable to find key in Redis: %v", key)
+		req.ToErrorResponse(errcode.ErrorGetUserInfoFail) //随意一点
+		return
+	}
+	req.ToResponse(val)
 }
