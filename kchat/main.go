@@ -15,6 +15,7 @@ import (
 )
 
 func main() {
+	InitSetting()
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()
 	s := &http.Server{

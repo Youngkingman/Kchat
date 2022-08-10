@@ -23,7 +23,7 @@ var (
 )
 
 func setupFlag() error {
-	flag.StringVar(&port, "port", "", "启动端口")
+	flag.StringVar(&port, "port", "8080", "启动端口")
 	flag.StringVar(&runMode, "mode", "", "启动模式")
 	flag.StringVar(&config, "config", "configs/", "指定要使用的配置文件路径")
 	flag.BoolVar(&isVersion, "version", false, "编译信息")
@@ -101,4 +101,31 @@ func setupValidator() error {
 	binding.Validator = global.Validator
 
 	return nil
+}
+
+func InitSetting() {
+	err := setupFlag()
+	if err != nil {
+		log.Fatalf("init.setupFlag err: %v", err)
+	}
+	err = setupSetting()
+	if err != nil {
+		log.Fatalf("init.setupSetting err: %v", err)
+	}
+	err = setupLogger()
+	if err != nil {
+		log.Fatalf("init.setupLogger err: %v", err)
+	}
+	err = setupDBEngine()
+	if err != nil {
+		log.Fatalf("init.setupDBEngine err: %v", err)
+	}
+	err = setupValidator()
+	if err != nil {
+		log.Fatalf("init.setupValidator err: %v", err)
+	}
+	// err = setupTracer()
+	// if err != nil {
+	// 	log.Fatalf("init.setupTracer err: %v", err)
+	// }
 }
