@@ -54,7 +54,13 @@ type DatabaseSettingS struct {
 	MaxOpenConns int
 }
 
-type RedisSettings struct {
+type RedisSettingS struct {
+	Host       string
+	Port       int
+	Auth       string
+	Db         int
+	MaxRetries int
+	PoolSize   int
 }
 
 var sections = make(map[string]interface{})

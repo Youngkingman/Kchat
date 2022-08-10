@@ -86,7 +86,6 @@ func setupLogger() error {
 
 func setupDBEngine() error {
 	var err error
-	// global.DBEngine, err = model.NewDBEngine(global.DatabaseSetting)
 	global.MySQL, err = dbutil.NewSQL(global.DatabaseSetting)
 	if err != nil {
 		return err

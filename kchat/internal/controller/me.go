@@ -22,15 +22,6 @@ func Me(c *gin.Context) {
 		global.Logger.Debugf(c, "Unable to extract user from request context for unknown reason: %v\n", c)
 		req.ToErrorResponse(errcode.ServerError.WithDetails("This shouldn't happen, as our middleware ought to throw an error."))
 	}
-	// This shouldn't happen, as our middleware ought to throw an error.
-	// This is an extra safety measure
-
-	//if !exists {
-	// global.Logger.Debugf(c, "Unable to extract user from request context for unknown reason: %v\n", c)
-	// // err := apperrors.NewInternal()
-	// req.ToErrorResponse(errcode.ServerError.WithDetails("This shouldn't happen, as our middleware ought to throw an error."))
-	// return
-	//}
 
 	// use the Request Context
 	// ctx := c.Request.Context()
