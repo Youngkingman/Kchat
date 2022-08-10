@@ -23,7 +23,7 @@ func Me(c *gin.Context) {
 
 	// use the Request Context
 	// ctx := c.Request.Context()
-	u, err := model.GetUser(c.Request.Context(), uid)
+	u, err := model.GetUserByUid(c.Request.Context(), uid)
 
 	if err != nil {
 		global.Logger.Debugf(c, "Unable to find user: %v\n%v", uid, err)

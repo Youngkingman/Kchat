@@ -16,9 +16,20 @@ type User struct {
 	Website  string `json:"website"`
 }
 
-func GetUser(ctx context.Context, uid int) (u *User, err error) {
+func GetUserByUid(ctx context.Context, uid int) (u *User, err error) {
 	u = &User{}
 	err = global.MySQL.Get(u, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"), uid)
 	global.Logger.Debugf(ctx, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"))
+	return
+}
+
+func GetUserPasswordByEmail(ctx context.Context, email string) (psw string, err error) {
+	err = global.MySQL.Get(psw, dbutil.Prefix("SELECT password FROM #__user WHERE email=?"), email)
+	return
+}
+
+func AddUser(ctx context.Context, u *User) (err error) {
+	s := `INSERT INTO #__user (name, email, password)  VALUES (?,?,?);`
+	_, err = global.MySQL.Exec(dbutil.Prefix(s), u.Name, u.Email, u.Password)
 	return
 }

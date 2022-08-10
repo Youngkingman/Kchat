@@ -10,7 +10,7 @@ import (
 )
 
 // 用户存储的密码应该包括了 {s1}.{s2}两部分, {s1}是加密文, {s2}是盐,每个人的盐都是随机生成的
-func hashPassword(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	// example for making salt - https://play.golang.org/p/_Aw6WeWC42I
 	salt := make([]byte, 32)
 	_, err := rand.Read(salt)
@@ -30,7 +30,7 @@ func hashPassword(password string) (string, error) {
 	return hashedPW, nil
 }
 
-func comparePasswords(storedPassword string, suppliedPassword string) (bool, error) {
+func ComparePasswords(storedPassword string, suppliedPassword string) (bool, error) {
 	pwsalt := strings.Split(storedPassword, ".")
 
 	// check supplied password salted with hash
