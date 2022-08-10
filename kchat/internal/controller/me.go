@@ -43,5 +43,6 @@ func Me(c *gin.Context) {
 
 		return
 	}
+	u.Password = "" //因为懒得写db字段，于是就这样吧
 	req.ToResponse(u)
 }
