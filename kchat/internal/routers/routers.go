@@ -12,16 +12,17 @@ func NewRouter() *gin.Engine {
 	if global.ServerSetting.RunMode == "debug" {
 		r.Use(gin.Logger())
 		r.Use(gin.Recovery())
+		// r.Use(middleware.Tracing())
+		// r.Use(middleware.RateLimiter(methodLimiters))
+		//测试接口，证明跑通了sql
+		r.GET("/me", controller.Me)
+		//测试接口，证明跑通了redis
+		r.GET("/me-redis", controller.MeRedis)
 	} else {
 		// r.Use(middleware.AccessLog())
 		// r.Use(middleware.Recovery())
 	}
 
-	// r.Use(middleware.Tracing())
-	// r.Use(middleware.RateLimiter(methodLimiters))
-	//测试接口，证明跑通了sql
-	r.GET("/me", controller.Me)
-	r.GET("/me-redis", controller.MeRedis)
 	g := r.Group("/home")
 	g.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
 	g.Use(middleware.Translations())
