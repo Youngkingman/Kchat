@@ -12,11 +12,13 @@ type User struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
-	ImageURL string `json:"imageUrl"`
+	ImageURL string `json:"img_url"`
 	Website  string `json:"website"`
 }
 
 func GetUser(ctx context.Context, uid int) (u *User, err error) {
-	err = global.MySQL.Select(u, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"), uid)
+	u = &User{}
+	err = global.MySQL.Get(u, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"), uid)
+	global.Logger.Debugf(ctx, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"))
 	return
 }
