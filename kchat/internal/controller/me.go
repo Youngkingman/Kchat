@@ -19,14 +19,17 @@ func Me(c *gin.Context) {
 	// This is an extra safety measure
 	req := app.NewResponse(c)
 	if !exists {
-		global.Logger.Fatalf(c, "Unable to extract user from request context for unknown reason: %v\n", c)
-		// err := apperrors.NewInternal()
-		req.ToErrorResponse(errcode.ServerError.WithDetails("This shouldn't happen, as our middleware ought to throw an error."))
+		// global.Logger.Debugf(c, "Unable to extract user from request context for unknown reason: %v\n", c)
+		// // err := apperrors.NewInternal()
+		// req.ToErrorResponse(errcode.ServerError.WithDetails("This shouldn't happen, as our middleware ought to throw an error."))
 
-		return
+		// return
 	}
 
 	uid := user.(*model.User).UID
+	if !exists {
+		uid = 1
+	}
 
 	// use the Request Context
 	// ctx := c.Request.Context()

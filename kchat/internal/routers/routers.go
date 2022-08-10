@@ -30,18 +30,18 @@ func NewRouter() *gin.Engine {
 	// r.POST("/upload/file", upload.UploadFile)
 	// r.POST("/auth", api.GetAuth)
 	// r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
-	apiv1 := r.Group("/api/v1")
-	apiv1.Use() //middleware.JWT()
-	{
-		// // 创建标签
-		// apiv1.POST("/tags", tag.Create)
-		// // 删除指定标签
-		// apiv1.DELETE("/tags/:id", tag.Delete)
-		// // 更新指定标签
-		// apiv1.PUT("/tags/:id", tag.Update)
-		// // 获取标签列表
-		// apiv1.GET("/tags", tag.List)
-	}
+	// apiv1 := r.Group("/api/v1")
+	// apiv1.Use() //middleware.JWT()
+	// {
+	// // 创建标签
+	// apiv1.POST("/tags", tag.Create)
+	// // 删除指定标签
+	// apiv1.DELETE("/tags/:id", tag.Delete)
+	// // 更新指定标签
+	// apiv1.PUT("/tags/:id", tag.Update)
+	// // 获取标签列表
+	// apiv1.GET("/tags", tag.List)
+	// }
 	// websocket相关路由
 	ws := r.Group("/ws/v1")
 	ws.Use()
