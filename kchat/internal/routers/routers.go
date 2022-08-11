@@ -19,8 +19,8 @@ func NewRouter() *gin.Engine {
 		//测试接口，证明跑通了redis
 		r.GET("/me-redis", controller.MeRedis)
 	} else {
-		// r.Use(middleware.AccessLog())
-		// r.Use(middleware.Recovery())
+		r.Use(middleware.AccessLog())
+		r.Use(middleware.Recovery())
 	}
 
 	g := r.Group("/home")
