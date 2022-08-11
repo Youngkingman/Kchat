@@ -4,15 +4,13 @@ import (
 	"time"
 
 	"github.com/Youngkingman/Kchat/kchat/global"
-	"github.com/Youngkingman/Kchat/kchat/pkg/util"
+	"github.com/Youngkingman/Kchat/kchat/internal/model"
 	"github.com/dgrijalva/jwt-go"
 )
 
 // 需要修改带上用户信息
 type Claims struct {
-	UID       int64  `json:"uid"`
-	AppKey    string `json:"app_key"`
-	AppSecret string `json:"app_secret"`
+	User *model.User `json:"user"`
 	jwt.StandardClaims
 }
 
@@ -20,13 +18,11 @@ func GetJWTSecret() []byte {
 	return []byte(global.JWTSetting.Secret)
 }
 
-func GenerateToken(uid int64, appKey, appSecret string) (string, error) {
+func GenerateToken(user *model.User) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(global.JWTSetting.Expire)
 	claims := Claims{
-		UID:       uid,
-		AppKey:    util.EncodeMD5(appKey),
-		AppSecret: util.EncodeMD5(appSecret),
+		User: user,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    global.JWTSetting.Issuer,

@@ -17,22 +17,40 @@ type signinReq struct {
 func Signin(c *gin.Context) {
 	var req signinReq
 	resp := app.NewResponse(c)
-
+	// 获取登录信息
 	valid, errs := app.BindAndValid(c, &req)
 	if !valid {
 		global.Logger.Errorf(c, "app.BindAndValid errs: %v", errs)
 		resp.ToErrorResponse(errcode.InvalidParams.WithDetails(errs.Errors()...))
 		return
 	}
-
-	storePsw, err := model.GetUserPasswordByEmail(c, req.Email)
-	psw.ComparePasswords(storePsw, req.Password)
+	// 查找密码并校验
+	u, err := model.GetUserByEmail(c, req.Email)
+	if err != nil {
+		global.Logger.Errorf(c, "fail to sign up with errs %v", err)
+		resp.ToErrorResponse(errcode.ErrorSignUpFail.WithDetails(err.Error()))
+		return
+	}
+	storePsw := u.Password
+	ok, err := psw.ComparePasswords(storePsw, req.Password)
 
 	if err != nil {
 		global.Logger.Errorf(c, "fail to sign up with errs %v", err)
 		resp.ToErrorResponse(errcode.ErrorSignUpFail.WithDetails(err.Error()))
 		return
 	}
-	// here we need to return a token, finish later
-	resp.ToResponse("sign up success")
+	if !ok {
+		resp.ToErrorResponse(errcode.ErrorInvalidPassword)
+		return
+	}
+	// 生成token
+	token, err := app.GenerateToken(u)
+	if err != nil {
+		resp.ToErrorResponse(errcode.ErrorTokenGenerateFail)
+		return
+	}
+	// 将token加入redis中
+	err = model.SetToken(u.Email, token)
+	// 回传token
+	resp.ToResponse(gin.H{"token": token})
 }

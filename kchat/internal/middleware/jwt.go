@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/Youngkingman/Kchat/kchat/internal/model"
 	"github.com/Youngkingman/Kchat/kchat/pkg/app"
 	"github.com/Youngkingman/Kchat/kchat/pkg/errcode"
 	"github.com/dgrijalva/jwt-go"
@@ -21,8 +22,9 @@ func JWT() gin.HandlerFunc {
 		if token == "" {
 			ecode = errcode.InvalidParams
 		} else {
-			_, err := app.ParseToken(token)
-			if err != nil {
+			claim, err := app.ParseToken(token)
+			tokenInRedis, errRedis := model.GetToken(claim.User.Email)
+			if err != nil || tokenInRedis != token {
 				switch err.(*jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
 					ecode = errcode.UnauthorizedTokenTimeout
@@ -30,6 +32,14 @@ func JWT() gin.HandlerFunc {
 					ecode = errcode.UnauthorizedTokenError
 				}
 			}
+			// 系统时钟的细微差别使得它们可能有那么一丝可能Redis过期了token没过期，用户多了就是必然
+			if errRedis != nil {
+				ecode = errcode.UnauthorizedTokenError
+			} else if ecode == errcode.UnauthorizedTokenTimeout {
+				model.DeleteToken(claim.User.Email)
+			}
+			// 应用这个中间件的路由都可以从contex得到用户的信息,email一定是有的,不保证是最新信息
+			c.Set("user", claim.User)
 		}
 
 		if ecode != errcode.Success {

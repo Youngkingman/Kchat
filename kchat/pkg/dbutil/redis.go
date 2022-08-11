@@ -10,11 +10,11 @@ import (
 	redis "github.com/go-redis/redis"
 )
 
-var redisOnce sync.Once
-
 type RedisCli struct {
 	Cli *redis.Client
 }
+
+var redisOnce sync.Once
 
 //ErrKeyNotExists not exists
 var ErrKeyNotExists = redis.Nil

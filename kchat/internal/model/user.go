@@ -17,7 +17,6 @@ type User struct {
 }
 
 func GetUserByUid(ctx context.Context, uid int) (u *User, err error) {
-	u = &User{}
 	err = global.MySQL.Get(u, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"), uid)
 	global.Logger.Debugf(ctx, dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"))
 	return
@@ -25,6 +24,11 @@ func GetUserByUid(ctx context.Context, uid int) (u *User, err error) {
 
 func GetUserPasswordByEmail(ctx context.Context, email string) (psw string, err error) {
 	err = global.MySQL.Get(psw, dbutil.Prefix("SELECT password FROM #__user WHERE email=?"), email)
+	return
+}
+
+func GetUserByEmail(ctx context.Context, email string) (user *User, err error) {
+	err = global.MySQL.Get(user, dbutil.Prefix("SELECT * FROM #__user WHERE email=?"), email)
 	return
 }
 

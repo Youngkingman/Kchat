@@ -46,5 +46,14 @@ func Signup(c *gin.Context) {
 		return
 	}
 	// here we need to return a token, finish later
-	resp.ToResponse("sign up success")
+	// 生成token
+	token, err := app.GenerateToken(u)
+	if err != nil {
+		resp.ToErrorResponse(errcode.ErrorTokenGenerateFail)
+		return
+	}
+	// 将token加入redis中
+	err = model.SetToken(u.Email, token)
+	// 回传token
+	resp.ToResponse(gin.H{"token": token})
 }

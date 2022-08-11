@@ -27,7 +27,7 @@ func NewRouter() *gin.Engine {
 	g.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
 	g.Use(middleware.Translations())
 	{
-		g.POST("/signout", controller.Signout)
+		g.POST("/signout", middleware.JWT(), controller.Signout)
 		g.POST("/signup", controller.Signup)
 		g.POST("/signin", controller.Signin)
 	}
