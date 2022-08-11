@@ -10,7 +10,7 @@ import (
 )
 
 type signupReq struct {
-	Name     string `json:"name" binding:"required,gte=1,lte30"`
+	Name     string `json:"name" binding:"required,gte=1,lte=30"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,gte=6,lte=30"`
 }
@@ -38,11 +38,10 @@ func Signup(c *gin.Context) {
 		Email:    req.Email,
 		Password: hashPw,
 	}
-
 	err = model.AddUser(c, u)
 	if err != nil {
 		global.Logger.Errorf(c, "fail to sign up with errs %v", err)
-		resp.ToErrorResponse(errcode.ErrorSignUpFail.WithDetails(err.Error()))
+		resp.ToErrorResponse(errcode.ErrorDuplicateUserWithEmail.WithDetails(err.Error()))
 		return
 	}
 	// here we need to return a token, finish later

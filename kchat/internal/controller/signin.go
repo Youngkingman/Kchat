@@ -27,16 +27,16 @@ func Signin(c *gin.Context) {
 	// 查找密码并校验
 	u, err := model.GetUserByEmail(c, req.Email)
 	if err != nil {
-		global.Logger.Errorf(c, "fail to sign up with errs %v", err)
-		resp.ToErrorResponse(errcode.ErrorSignUpFail.WithDetails(err.Error()))
+		global.Logger.Errorf(c, "fail to sign in with errs %v", err)
+		resp.ToErrorResponse(errcode.ErrorGetUserInfoFail.WithDetails(err.Error()))
 		return
 	}
 	storePsw := u.Password
 	ok, err := psw.ComparePasswords(storePsw, req.Password)
 
 	if err != nil {
-		global.Logger.Errorf(c, "fail to sign up with errs %v", err)
-		resp.ToErrorResponse(errcode.ErrorSignUpFail.WithDetails(err.Error()))
+		global.Logger.Errorf(c, "fail to sign in with errs %v", err)
+		resp.ToErrorResponse(errcode.ErrorSignInFail.WithDetails(err.Error()))
 		return
 	}
 	if !ok {

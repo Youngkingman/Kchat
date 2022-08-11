@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
 	"github.com/Youngkingman/Kchat/kchat/pkg/app"
 	"github.com/Youngkingman/Kchat/kchat/pkg/errcode"
@@ -8,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func JWT() gin.HandlerFunc {
+func AuthJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			token string
@@ -24,7 +26,7 @@ func JWT() gin.HandlerFunc {
 		} else {
 			claim, err := app.ParseToken(token)
 			tokenInRedis, errRedis := model.GetToken(claim.User.Email)
-			if err != nil || tokenInRedis != token {
+			if err != nil {
 				switch err.(*jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
 					ecode = errcode.UnauthorizedTokenTimeout
@@ -32,6 +34,7 @@ func JWT() gin.HandlerFunc {
 					ecode = errcode.UnauthorizedTokenError
 				}
 			}
+			fmt.Println(tokenInRedis)
 			// 系统时钟的细微差别使得它们可能有那么一丝可能Redis过期了token没过期，用户多了就是必然
 			if errRedis != nil {
 				ecode = errcode.UnauthorizedTokenError
