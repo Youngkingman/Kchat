@@ -14,29 +14,29 @@ func NewRouter() *gin.Engine {
 		r.Use(gin.Recovery())
 		// r.Use(middleware.Tracing())
 		// r.Use(middleware.RateLimiter(methodLimiters))
-		//测试接口，证明跑通了sql
 		r.GET("/me", controller.Me)
-		//测试接口，证明跑通了redis
 		r.GET("/me-redis", controller.MeRedis)
 	} else {
 		r.Use(middleware.AccessLog())
 		r.Use(middleware.Recovery())
 	}
 
-	g := r.Group("/home")
-	g.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
-	g.Use(middleware.Translations())
+	home := r.Group("/home")
+	home.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
+	home.Use(middleware.Translations())
 	{
-		g.GET("/userinfo", middleware.AuthJWT(), controller.UserInfo)
-		g.POST("/signout", middleware.AuthJWT(), controller.Signout)
-		g.POST("/signup", controller.Signup)
-		g.POST("/signin", controller.Signin)
+		home.GET("/userinfo", middleware.AuthJWT(), controller.UserInfo)
+		home.POST("/signout", middleware.AuthJWT(), controller.Signout)
+		home.POST("/signup", controller.Signup)
+		home.POST("/signin", controller.Signin)
 	}
 	// websocket相关路由
-	ws := r.Group("/ws/v1")
-	ws.Use()
+	chat := r.Group("/chat")
+	chat.Use(middleware.AuthJWT())
 	{
-
+		chat.Any("/ws", controller.ChatroomWebsocket)
+		chat.GET("/roompage", controller.ChatroomHomePage)
+		chat.GET("/userlist", controller.ChatroomUserList)
 	}
 	return r
 }

@@ -64,3 +64,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/gorm v1.23.8 // indirect
 )
+
+require (
+	github.com/klauspost/compress v1.10.3 // indirect
+	nhooyr.io/websocket v1.8.7 // indirect
+)

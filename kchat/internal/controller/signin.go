@@ -43,6 +43,7 @@ func Signin(c *gin.Context) {
 		resp.ToErrorResponse(errcode.ErrorInvalidPassword)
 		return
 	}
+	// 可以检查数据库中是否有token并提示风险，这里单纯每次都更新
 	// 生成token
 	token, err := app.GenerateToken(u)
 	if err != nil {
@@ -51,6 +52,7 @@ func Signin(c *gin.Context) {
 	}
 	// 将token加入redis中
 	err = model.SetToken(u.Email, token)
-	// 回传token
-	resp.ToResponse(gin.H{"token": token})
+	// 回传tokenh和用户数据
+	u.Password = ""
+	resp.ToResponse(gin.H{"token": token, "user": u})
 }
