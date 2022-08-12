@@ -37,6 +37,8 @@ func NewRouter() *gin.Engine {
 		chat.Any("/ws", controller.ChatroomWebsocket)
 		chat.GET("/roompage", controller.ChatroomHomePage)
 		chat.GET("/userlist", controller.ChatroomUserList)
+		chat.POST("/addchatroom")
+		chat.POST("/addchatroomuser")
 	}
 	return r
 }
