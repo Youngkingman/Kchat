@@ -5,6 +5,7 @@ import "time"
 type Chatter struct {
 	RoomID   int       `json:"room_id"`
 	UID      int       `json:"uid"`
+	Addr     string    `json:"addr"` //ip地址，用来识别罕见和五十万
 	Email    string    `json:"email"`
 	Name     string    `json:"name"`
 	ImageURL string    `json:"img_url"`

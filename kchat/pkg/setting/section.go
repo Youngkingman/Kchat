@@ -62,6 +62,12 @@ type RedisSettingS struct {
 	PoolSize   int
 }
 
+type ChatRoomSettingS struct {
+	Sensitive       []string
+	OfflineNum      int
+	MessageQueueLen int
+}
+
 var sections = make(map[string]interface{})
 
 func (s *Setting) ReadSection(k string, v interface{}) error {

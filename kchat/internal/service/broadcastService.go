@@ -1,13 +1,21 @@
 package service
 
 import (
+	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
 )
+
+// 根据房间号索引对应的房间
+// 1.先校验用户是否注册过房间以及房间是否存在
+// 2.启动时直接加载所有房间，项目小问题不大，项目大emmmm分布式分配聊天房间
+// 缺少用户注册接口，测试先自己强开一个
+// 跨域问题需要解决,不然整不动vue-cli
+var BroadCastMap map[int]*ChatRoom
 
 type broadcaster struct {
 	// 所有 channel 统一管理，可以避免外部乱用
 	RoomID          int
-	chatters        map[string]*Chatter
+	chatters        map[string]*Chatter //在线用户信息
 	enteringChannel chan *Chatter
 	leavingChannel  chan *Chatter
 	messageChannel  chan *model.Message
@@ -27,7 +35,7 @@ func NewBroadCast(rid int) *broadcaster {
 
 		enteringChannel: make(chan *Chatter),
 		leavingChannel:  make(chan *Chatter),
-		//messageChannel:  make(chan *model.Message, global.MessageQueueLen),
+		messageChannel:  make(chan *model.Message, global.ChatRoomSetting.MessageQueueLen),
 
 		checkUserChannel:      make(chan string),
 		checkUserCanInChannel: make(chan bool),
@@ -78,18 +86,18 @@ func (b *broadcaster) Start() {
 	}
 }
 
-func (b *broadcaster) UserEntering(u *Chatter) {
-	b.enteringChannel <- u
+func (b *broadcaster) UserEntering(c *Chatter) {
+	b.enteringChannel <- c
 }
 
-func (b *broadcaster) UserLeaving(u *Chatter) {
-	b.leavingChannel <- u
+func (b *broadcaster) UserLeaving(c *Chatter) {
+	b.leavingChannel <- c
 }
 
 func (b *broadcaster) Broadcast(msg *model.Message) {
-	// if len(b.messageChannel) >= global.MessageQueueLen {
-	// 	log.Println("broadcast queue overfull")
-	// }
+	if len(b.messageChannel) >= global.ChatRoomSetting.MessageQueueLen {
+		//global.Logger.Debug(ctx, "broadcast queue overfull")
+	}
 	b.messageChannel <- msg
 }
 

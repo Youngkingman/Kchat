@@ -12,5 +12,6 @@ var (
 	JWTSetting      *setting.JWTSettingS
 	DatabaseSetting *setting.DatabaseSettingS
 	RedisSetting    *setting.RedisSettingS
+	ChatRoomSetting *setting.ChatRoomSettingS
 	Logger          *logger.Logger
 )

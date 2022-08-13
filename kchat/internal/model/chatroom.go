@@ -81,3 +81,27 @@ func GetChatRoomByRoomId(ctx context.Context, rid int) (*ChatRoom, error) {
 	}
 	return chatRoom, nil
 }
+
+func GetAllChatRoom(ctx context.Context) ([]*ChatRoom, error) {
+	tmp := make([]*tranChatRoom, 0)
+	s := "SELECT * FROM #__chatroom"
+	err := global.MySQL.Select(tmp, dbutil.Prefix(s))
+	if err != nil {
+		return nil, err
+	}
+	ret := make([]*ChatRoom, 0)
+	for _, v := range tmp {
+		usersMap := make(map[int]bool)
+		err = json.Unmarshal([]byte(v.Users), &usersMap)
+		if err != nil {
+			return nil, err
+		}
+		chatRoom := &ChatRoom{
+			RoomID: v.RoomID,
+			Name:   v.Name,
+			Users:  usersMap,
+		}
+		ret = append(ret, chatRoom)
+	}
+	return ret, nil
+}

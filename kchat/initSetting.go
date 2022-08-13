@@ -61,6 +61,10 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
+	err = s.ReadSection("ChatRoom", &global.ChatRoomSetting)
+	if err != nil {
+		return err
+	}
 
 	global.AppSetting.DefaultContextTimeout *= time.Second
 	global.JWTSetting.Expire *= time.Second
