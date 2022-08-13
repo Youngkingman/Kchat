@@ -5,13 +5,6 @@ import (
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
 )
 
-// 根据房间号索引对应的房间
-// 1.先校验用户是否注册过房间以及房间是否存在
-// 2.启动时直接加载所有房间，项目小问题不大，项目大emmmm分布式分配聊天房间
-// 缺少用户注册接口，测试先自己强开一个
-// 跨域问题需要解决,不然整不动vue-cli
-var BroadCastMap map[int]*ChatRoom
-
 type broadcaster struct {
 	// 所有 channel 统一管理，可以避免外部乱用
 	RoomID          int
