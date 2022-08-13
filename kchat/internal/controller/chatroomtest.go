@@ -49,4 +49,5 @@ func AddUserSToChatRoomTest(c *gin.Context) {
 		global.Logger.Errorf(c, "add chat room fail with error: %v", err)
 		resp.ToErrorResponse(errcode.ErrorAddChatRoomFail.WithDetails(err.Error()))
 	}
+	resp.ToResponse(nil)
 }
