@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/pkg/dbutil"
@@ -42,17 +43,26 @@ func AddUserSToChatRoom(ctx context.Context, rid int, uids []int) (err error) {
 	}()
 	// 获取用户列表
 	usersStr := ""
-	err = tx.QueryRow(dbutil.Prefix("SELECT users FROM #__chatroom WHERE rid=?"), rid).Scan(&usersStr)
-	usersMap := make(map[int]bool)
-	err = json.Unmarshal([]byte(usersStr), &usersMap)
+	err = tx.QueryRow(dbutil.Prefix("SELECT users FROM #__chatroom WHERE room_id=?"), rid).Scan(&usersStr)
 	if err != nil {
 		return err
 	}
-	for _, v := range uids {
+	usersArr := make([]int, 0)
+	usersMap := make(map[int]bool)
+	err = json.Unmarshal([]byte(usersStr), &usersArr)
+	if err != nil {
+		return err
+	}
+	for _, v := range usersArr {
 		usersMap[v] = true
 	}
+	for _, v := range uids {
+		if ok, _ := usersMap[v]; !ok {
+			usersArr = append(usersArr, v)
+		}
+	}
 	// 更新用户列表
-	userBytes, err := json.Marshal(usersMap)
+	userBytes, err := json.Marshal(usersArr)
 	if err != nil {
 		return err
 	}
@@ -61,17 +71,22 @@ func AddUserSToChatRoom(ctx context.Context, rid int, uids []int) (err error) {
 }
 
 func GetChatRoomByRoomId(ctx context.Context, rid int) (*ChatRoom, error) {
-	tmp := &tranChatRoom{}
-	s := "SELECT * FROM #__chatroom WHERE rid=?"
-	err := global.MySQL.Get(tmp, dbutil.Prefix(s), rid)
+	tmp := tranChatRoom{}
+	s := "SELECT * FROM #__chatroom WHERE room_id=?"
+	err := global.MySQL.Get(&tmp, dbutil.Prefix(s), rid)
 	if err != nil {
+		fmt.Println(dbutil.Prefix(s))
 		return nil, err
 	}
 	// 解析用户map
 	usersMap := make(map[int]bool)
-	err = json.Unmarshal([]byte(tmp.Users), &usersMap)
+	userArr := make([]int, 0)
+	err = json.Unmarshal([]byte(tmp.Users), &userArr)
 	if err != nil {
 		return nil, err
+	}
+	for _, v := range userArr {
+		usersMap[v] = true
 	}
 
 	chatRoom := &ChatRoom{
@@ -83,18 +98,22 @@ func GetChatRoomByRoomId(ctx context.Context, rid int) (*ChatRoom, error) {
 }
 
 func GetAllChatRoom(ctx context.Context) ([]*ChatRoom, error) {
-	tmp := make([]*tranChatRoom, 0)
+	tmp := make([]tranChatRoom, 0)
 	s := "SELECT * FROM #__chatroom"
-	err := global.MySQL.Select(tmp, dbutil.Prefix(s))
+	err := global.MySQL.Select(&tmp, dbutil.Prefix(s))
 	if err != nil {
 		return nil, err
 	}
 	ret := make([]*ChatRoom, 0)
 	for _, v := range tmp {
 		usersMap := make(map[int]bool)
-		err = json.Unmarshal([]byte(v.Users), &usersMap)
+		userArr := make([]int, 0)
+		err = json.Unmarshal([]byte(v.Users), &userArr)
 		if err != nil {
 			return nil, err
+		}
+		for _, v := range userArr {
+			usersMap[v] = true
 		}
 		chatRoom := &ChatRoom{
 			RoomID: v.RoomID,

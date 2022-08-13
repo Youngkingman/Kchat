@@ -11,4 +11,5 @@ var (
 	UnauthorizedTokenGenerate = NewError(10000006, "鉴权失败，Token生成失败")
 	TooManyRequests           = NewError(10000007, "请求过多")
 	UnmarshalJsonFail         = NewError(10000008, "JSON解析失败，请查看数据")
+	TransStringFail           = NewError(10000009, "字符串转换失败")
 )

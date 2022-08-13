@@ -1,6 +1,9 @@
 package controller
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
 	"github.com/Youngkingman/Kchat/kchat/pkg/app"
@@ -31,6 +34,7 @@ func AddChatRoomTest(c *gin.Context) {
 	if err != nil {
 		global.Logger.Errorf(c, "add chat room fail with error: %v", err)
 		resp.ToErrorResponse(errcode.ErrorAddChatRoomFail.WithDetails(err.Error()))
+		return
 	}
 	resp.ToResponse(nil)
 }
@@ -46,8 +50,44 @@ func AddUserSToChatRoomTest(c *gin.Context) {
 	}
 	err := model.AddUserSToChatRoom(c, req.Rid, req.Uids)
 	if err != nil {
-		global.Logger.Errorf(c, "add chat room fail with error: %v", err)
+		global.Logger.Errorf(c, "add chatroom fail with error: %v", err)
 		resp.ToErrorResponse(errcode.ErrorAddChatRoomFail.WithDetails(err.Error()))
+		return
 	}
 	resp.ToResponse(nil)
+}
+
+func GetChatRoomByRoomIdTest(c *gin.Context) {
+	ridStr := c.Query("rid")
+	resp := app.NewResponse(c)
+	rid, err := strconv.Atoi(ridStr)
+	if err != nil {
+		global.Logger.Errorf(c, "get chatroom info fail with error: %v", err)
+		resp.ToErrorResponse(errcode.TransStringFail.WithDetails(err.Error()))
+		return
+	}
+	chatRoom, err := model.GetChatRoomByRoomId(c, rid)
+	if err != nil {
+		global.Logger.Errorf(c, "get chatroom info fail with error: %v", err)
+		resp.ToErrorResponse(errcode.ErrorGetChatRoomInfoFail.WithDetails(err.Error()))
+		return
+	}
+	log.Println(*chatRoom)
+	//resp.ToResponse(*chatRoom)
+}
+
+func GetAllChatRoomTest(c *gin.Context) {
+	resp := app.NewResponse(c)
+	chatRooms, err := model.GetAllChatRoom(c)
+	if err != nil {
+		global.Logger.Errorf(c, "get chatroom info fail with error: %v", err)
+		resp.ToErrorResponse(errcode.ErrorGetChatRoomInfoFail.WithDetails(err.Error()))
+		return
+	}
+	ret := make([]model.ChatRoom, 0)
+	for _, v := range chatRooms {
+		ret = append(ret, *v)
+	}
+	log.Println(chatRooms)
+	//resp.ToResponse(ret)
 }

@@ -7,9 +7,11 @@ import (
 	"github.com/spf13/cast"
 )
 
-var MsgSrv messageService = &message{}
+var MsgSrv messageService = &Message{}
 
-type message struct{}
+type Message struct {
+	Msg *model.Message
+}
 
 type messageService interface {
 	NewMessage(chatter *model.Chatter, content, clientTime string) *model.Message
@@ -20,7 +22,7 @@ type messageService interface {
 	NewImageMessage(chatter *model.Chatter, content, clientTime string) *model.Message
 }
 
-func (ms *message) NewMessage(chatter *model.Chatter, content, clientTime string) *model.Message {
+func (ms *Message) NewMessage(chatter *model.Chatter, content, clientTime string) *model.Message {
 	message := &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
@@ -34,7 +36,7 @@ func (ms *message) NewMessage(chatter *model.Chatter, content, clientTime string
 	return message
 }
 
-func (ms *message) NewImageMessage(chatter *model.Chatter, imgUrl, clientTime string) *model.Message {
+func (ms *Message) NewImageMessage(chatter *model.Chatter, imgUrl, clientTime string) *model.Message {
 	message := &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
@@ -48,7 +50,7 @@ func (ms *message) NewImageMessage(chatter *model.Chatter, imgUrl, clientTime st
 	return message
 }
 
-func (ms *message) NewWelcomeMessage(chatter *model.Chatter) *model.Message {
+func (ms *Message) NewWelcomeMessage(chatter *model.Chatter) *model.Message {
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
@@ -58,7 +60,7 @@ func (ms *message) NewWelcomeMessage(chatter *model.Chatter) *model.Message {
 	}
 }
 
-func (ms *message) NewUserEnterMessage(chatter *model.Chatter) *model.Message {
+func (ms *Message) NewUserEnterMessage(chatter *model.Chatter) *model.Message {
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
@@ -68,7 +70,7 @@ func (ms *message) NewUserEnterMessage(chatter *model.Chatter) *model.Message {
 	}
 }
 
-func (ms *message) NewUserLeaveMessage(chatter *model.Chatter) *model.Message {
+func (ms *Message) NewUserLeaveMessage(chatter *model.Chatter) *model.Message {
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
@@ -78,7 +80,7 @@ func (ms *message) NewUserLeaveMessage(chatter *model.Chatter) *model.Message {
 	}
 }
 
-func (ms *message) NewErrorMessage(content string) *model.Message {
+func (ms *Message) NewErrorMessage(content string) *model.Message {
 	return &model.Message{
 		UID:     System.UID,
 		RoomID:  System.RoomID,

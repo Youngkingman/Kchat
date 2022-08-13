@@ -11,5 +11,6 @@ var (
 	ErrorSignInFail             = NewError(20002007, "登录失败")
 	ErrorAddChatRoomFail        = NewError(20002008, "新建房间失败")
 	ErrorAddUserToChatRoomFail  = NewError(20002009, "加入用户失败")
+	ErrorGetChatRoomInfoFail    = NewError(20002010, "获取房间信息失败")
 	ErrorUploadFileFail         = NewError(20030001, "上传文件失败")
 )

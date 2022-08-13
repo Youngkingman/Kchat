@@ -19,7 +19,8 @@ type ChatRoom struct {
 // 跨域问题需要解决,不然整不动vue-cli
 var ChatRoomMap map[int]*ChatRoom
 
-func LoadChatRoom(ctx context.Context) error {
+func LoadChatRoom() error {
+	ctx := context.Background()
 	rooms, err := model.GetAllChatRoom(ctx)
 	if err != nil {
 		global.Logger.Panicf(ctx, "load rooms failed with error %v", err)
