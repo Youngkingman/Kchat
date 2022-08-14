@@ -34,9 +34,10 @@ func NewRouter() *gin.Engine {
 	chat := r.Group("/chat")
 	//chat.Use(middleware.AuthJWT())
 	{
-		chat.Any("/ws", controller.ChatroomWebsocket)
-		chat.GET("/roompage", controller.ChatroomHomePage)
-		chat.GET("/userlist", controller.ChatroomUserList)
+		chat.Any("/ws", middleware.AuthJWT(), controller.ChatroomWebsocket)
+		// chat.GET("/roompage", controller.ChatroomHomePage)
+		chat.GET("/chatterlist", middleware.AuthJWT(), controller.ChatRoomChatterList)
+		// The following api are under further establishment
 		chat.POST("/addchatroom", controller.AddChatRoomTest)
 		chat.POST("/addchatroomuser", controller.AddUserSToChatRoomTest)
 		chat.GET("/getallinfo", controller.GetAllChatRoomTest)

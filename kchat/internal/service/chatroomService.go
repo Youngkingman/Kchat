@@ -17,7 +17,6 @@ type ChatRoom struct {
 // 2.启动时直接加载所有房间，项目小问题不大，项目大emmmm分布式分配聊天房间
 // 缺少用户注册接口，测试先自己强开一个
 // 跨域问题需要解决,不然整不动vue-cli
-var ChatRoomMap map[int]*ChatRoom
 
 func LoadChatRoom() error {
 	ctx := context.Background()
@@ -31,7 +30,9 @@ func LoadChatRoom() error {
 			ChatRoom:  v,
 			BroadCast: NewBroadCast(v.RoomID),
 		}
-		ChatRoomMap[v.RoomID] = cr
+		// 全局加载的时候启动对应广播器的协程进行监听，只要服务器运行协程就不退出
+		go cr.BroadCast.Start()
+		ChatRoomMap.Set(v.RoomID, cr)
 	}
 	return nil
 }

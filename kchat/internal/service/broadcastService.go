@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
+	"github.com/gin-gonic/gin"
 )
 
 type broadcaster struct {
@@ -14,12 +15,12 @@ type broadcaster struct {
 	messageChannel  chan *model.Message
 
 	// 判断该昵称用户是否可进入聊天室（重复与否）：true 能，false 不能
-	checkUserChannel      chan string
-	checkUserCanInChannel chan bool
+	checkChatterChannel      chan string
+	checkChatterCanInChannel chan bool
 
 	// 获取用户列表
-	requestUsersChannel chan struct{}
-	chattersChannel     chan []*Chatter
+	requestChattersChannel chan struct{}
+	chattersChannel        chan []*Chatter
 }
 
 func NewBroadCast(rid int) *broadcaster {
@@ -30,11 +31,11 @@ func NewBroadCast(rid int) *broadcaster {
 		leavingChannel:  make(chan *Chatter),
 		messageChannel:  make(chan *model.Message, global.ChatRoomSetting.MessageQueueLen),
 
-		checkUserChannel:      make(chan string),
-		checkUserCanInChannel: make(chan bool),
+		checkChatterChannel:      make(chan string),
+		checkChatterCanInChannel: make(chan bool),
 
-		requestUsersChannel: make(chan struct{}),
-		chattersChannel:     make(chan []*Chatter),
+		requestChattersChannel: make(chan struct{}),
+		chattersChannel:        make(chan []*Chatter),
 	}
 }
 
@@ -62,13 +63,13 @@ func (b *broadcaster) Start() {
 				chatter.MessageChannel <- msg
 			}
 			//OfflineProcessor.Save(msg)
-		case name := <-b.checkUserChannel:
+		case name := <-b.checkChatterChannel:
 			if _, ok := b.chatters[name]; ok {
-				b.checkUserCanInChannel <- false
+				b.checkChatterCanInChannel <- false
 			} else {
-				b.checkUserCanInChannel <- true
+				b.checkChatterCanInChannel <- true
 			}
-		case <-b.requestUsersChannel:
+		case <-b.requestChattersChannel:
 			chatterList := make([]*Chatter, 0, len(b.chatters))
 			for _, chatter := range b.chatters {
 				chatterList = append(chatterList, chatter)
@@ -79,28 +80,28 @@ func (b *broadcaster) Start() {
 	}
 }
 
-func (b *broadcaster) UserEntering(c *Chatter) {
+func (b *broadcaster) ChatterEntering(c *Chatter) {
 	b.enteringChannel <- c
 }
 
-func (b *broadcaster) UserLeaving(c *Chatter) {
+func (b *broadcaster) ChatterLeaving(c *Chatter) {
 	b.leavingChannel <- c
 }
 
-func (b *broadcaster) Broadcast(msg *model.Message) {
+func (b *broadcaster) Broadcast(ctx *gin.Context, msg *model.Message) {
 	if len(b.messageChannel) >= global.ChatRoomSetting.MessageQueueLen {
-		//global.Logger.Debug(ctx, "broadcast queue overfull")
+		global.Logger.Debug(ctx, "broadcast queue overfull")
 	}
 	b.messageChannel <- msg
 }
 
 func (b *broadcaster) CanEnterRoom(nickname string) bool {
-	b.checkUserChannel <- nickname
+	b.checkChatterChannel <- nickname
 
-	return <-b.checkUserCanInChannel
+	return <-b.checkChatterCanInChannel
 }
 
-func (b *broadcaster) GetUserList() []*Chatter {
-	b.requestUsersChannel <- struct{}{}
+func (b *broadcaster) GetChatterList() []*Chatter {
+	b.requestChattersChannel <- struct{}{}
 	return <-b.chattersChannel
 }

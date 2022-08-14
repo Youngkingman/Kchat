@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Youngkingman/Kchat/kchat/global"
+	"github.com/Youngkingman/Kchat/kchat/internal/service"
 	"github.com/Youngkingman/Kchat/kchat/pkg/dbutil"
 	"github.com/Youngkingman/Kchat/kchat/pkg/logger"
 	"github.com/Youngkingman/Kchat/kchat/pkg/setting"
@@ -138,4 +139,9 @@ func InitSetting() {
 	// if err != nil {
 	// 	log.Fatalf("init.setupTracer err: %v", err)
 	// }
+	// 服务器启动的时候加载所有房间
+	err = service.LoadChatRoom()
+	if err != nil {
+		log.Fatalf("init.LoadChatRoom err: %v", err)
+	}
 }

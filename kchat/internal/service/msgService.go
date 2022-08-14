@@ -16,8 +16,8 @@ type Message struct {
 type messageService interface {
 	NewMessage(chatter *model.Chatter, content, clientTime string) *model.Message
 	NewWelcomeMessage(chatter *model.Chatter) *model.Message
-	NewUserEnterMessage(chatter *model.Chatter) *model.Message
-	NewUserLeaveMessage(chatter *model.Chatter) *model.Message
+	NewChatterEnterMessage(chatter *model.Chatter) *model.Message
+	NewChatterLeaveMessage(chatter *model.Chatter) *model.Message
 	NewErrorMessage(content string) *model.Message
 	NewImageMessage(chatter *model.Chatter, content, clientTime string) *model.Message
 }
@@ -60,7 +60,7 @@ func (ms *Message) NewWelcomeMessage(chatter *model.Chatter) *model.Message {
 	}
 }
 
-func (ms *Message) NewUserEnterMessage(chatter *model.Chatter) *model.Message {
+func (ms *Message) NewChatterEnterMessage(chatter *model.Chatter) *model.Message {
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
@@ -70,7 +70,7 @@ func (ms *Message) NewUserEnterMessage(chatter *model.Chatter) *model.Message {
 	}
 }
 
-func (ms *Message) NewUserLeaveMessage(chatter *model.Chatter) *model.Message {
+func (ms *Message) NewChatterLeaveMessage(chatter *model.Chatter) *model.Message {
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,

@@ -31,7 +31,7 @@ func NewChatter(user *model.User, conn *websocket.Conn, rid int) *Chatter {
 	}
 }
 
-func (c *Chatter) SendMessage(ctx gin.Context) {
+func (c *Chatter) SendMessage(ctx *gin.Context) {
 	for msg := range c.MessageChannel {
 		wsjson.Write(ctx.Request.Context(), c.conn, msg)
 	}
@@ -41,7 +41,7 @@ func (c *Chatter) CloseMessageChannel() {
 	close(c.MessageChannel)
 }
 
-func (c *Chatter) ReceiveMessage(ctx gin.Context) error {
+func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 	var (
 		receiveMsg map[string]string
 		err        error
@@ -68,6 +68,6 @@ func (c *Chatter) ReceiveMessage(ctx gin.Context) error {
 		reg := regexp.MustCompile(`@[^\s@]{2,20}`)
 		sendMsg.Ats = reg.FindAllString(sendMsg.Content, -1)
 
-		//Broadcaster.Broadcast(sendMsg)
+		bc.Broadcast(ctx, sendMsg)
 	}
 }
