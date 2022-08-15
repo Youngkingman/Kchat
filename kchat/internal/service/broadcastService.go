@@ -14,7 +14,7 @@ type broadcaster struct {
 	leavingChannel  chan *Chatter
 	messageChannel  chan *model.Message
 
-	// 判断该昵称用户是否可进入聊天室（重复与否）：true 能，false 不能
+	// 判断该昵称用户是否可进入聊天室（重复与否）：true 能，false 不能，这一对必须无缓冲
 	checkChatterChannel      chan string
 	checkChatterCanInChannel chan bool
 
@@ -64,7 +64,7 @@ func (b *broadcaster) Start() {
 			}
 			//OfflineProcessor.Save(msg)
 		case name := <-b.checkChatterChannel:
-			if _, ok := b.chatters[name]; ok {
+			if _, has := b.chatters[name]; has {
 				b.checkChatterCanInChannel <- false
 			} else {
 				b.checkChatterCanInChannel <- true
