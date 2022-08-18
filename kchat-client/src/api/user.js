@@ -22,3 +22,26 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function signup(data) {
+  return request({
+    url: '/home/signup',
+    method: 'post',
+    data
+  })
+}
+
+export function signin(data) {
+  return request({
+    url: '/home/signin',
+    method: 'post',
+    data
+  })
+}
+
+export function signout() {
+  return request({
+    url: '/home/signout',
+    method: 'post'
+  })
+}

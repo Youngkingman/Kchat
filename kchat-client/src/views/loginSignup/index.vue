@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title" >{{ signupOrLogin }} Form</h3>
       </div>
 
       <el-form-item prop="username">
@@ -34,15 +34,36 @@
           name="password"
           tabindex="2"
           auto-complete="on"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter.native="handleLoginOrSignup"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+       <el-form-item prop="repeatPassword" v-show="!isLogin">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          :key="passwordType"
+          ref="password"
+          v-model="loginForm.repeatPassword"
+          :type="passwordType"
+          placeholder="Repeat Your Password"
+          name="password"
+          tabindex="2"
+          auto-complete="on"
+          @keyup.enter.native="handleLoginOrSignup"
+        />
+      </el-form-item>
+     
 
+      <div class="btns">
+        <el-button :loading="loading" type="primary" style="width:60%;margin-bottom:30px;" @click.native.prevent="handleLoginOrSignup">{{ signupOrLogin }}</el-button>
+        <el-switch v-model="isLogin" style="width:10%;margin-left: 5%;"></el-switch>
+        <span style="color:#fff;">shift to {{ isLogin? "signup" : "login" }}</span>
+      </div>
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
@@ -72,18 +93,33 @@ export default {
         callback()
       }
     }
+    const validateRepeatPassword = (rule,value,callback) => {
+      if (value != this.password && !this.isLogin) {
+        callback(new Error('Two passwords should be consistent'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: '',
+        repeatPassword: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        repeatPassword:[{required:true, trigger: 'blur',validator:validateRepeatPassword}]
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      isLogin: true,
+    }
+  },
+  computed:{
+    signupOrLogin() {
+      return this.isLogin ? "Login" : "Signup"
     }
   },
   watch: {
@@ -120,6 +156,17 @@ export default {
           return false
         }
       })
+    },
+    handleSignup(){
+      console.log("here2")
+    }
+    ,
+    handleLoginOrSignup() {
+        if(this.isLogin) {
+          this.handleLogin()
+        } else {
+          this.handleSignup()
+        }
     }
   }
 }
@@ -194,8 +241,9 @@ $light_gray:#eee;
 
   .tips {
     font-size: 14px;
-    color: #fff;
+    color: rgb(255, 255, 255);
     margin-bottom: 10px;
+    margin-top: 10ps;
 
     span {
       &:first-of-type {

@@ -29,6 +29,7 @@ func NewRouter() *gin.Engine {
 		home.POST("/signout", middleware.AuthJWT(), controller.Signout)
 		home.POST("/signup", controller.Signup)
 		home.POST("/signin", controller.Signin)
+		home.POST("/login", controller.Signin) //一样的前端以后再改
 	}
 	// websocket相关路由
 	chat := r.Group("/chat")

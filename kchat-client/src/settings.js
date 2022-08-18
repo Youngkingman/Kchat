@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: 'Kchat Client',
 
   /**
    * @type {boolean} true | false
