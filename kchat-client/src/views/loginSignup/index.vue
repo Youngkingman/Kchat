@@ -1,20 +1,41 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+    >
       <div class="title-container">
-        <h3 class="title" >{{ signupOrLogin }} Form</h3>
+        <h3 class="title">{{ signupOrLogin }}</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="name" v-show="!isLogin">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
+          ref="name"
           v-model="loginForm.username"
           placeholder="Username"
-          name="username"
+          name="name"
+          type="text"
+          tabindex="1"
+          auto-complete="on"
+        />
+      </el-form-item>
+
+      <el-form-item prop="email">
+        <span class="svg-container">
+          <svg-icon icon-class="email" />
+        </span>
+        <el-input
+          ref="email"
+          v-model="loginForm.email"
+          placeholder="Enter your email"
+          name="email"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -41,7 +62,7 @@
         </span>
       </el-form-item>
 
-       <el-form-item prop="repeatPassword" v-show="!isLogin">
+      <el-form-item prop="repeatPassword" v-show="!isLogin">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
@@ -57,127 +78,139 @@
           @keyup.enter.native="handleLoginOrSignup"
         />
       </el-form-item>
-     
 
       <div class="btns">
-        <el-button :loading="loading" type="primary" style="width:60%;margin-bottom:30px;" @click.native.prevent="handleLoginOrSignup">{{ signupOrLogin }}</el-button>
-        <el-switch v-model="isLogin" style="width:10%;margin-left: 5%;"></el-switch>
-        <span style="color:#fff;">shift to {{ isLogin? "signup" : "login" }}</span>
-      </div>
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
+        <el-button
+          :loading="loading"
+          type="primary"
+          style="width: 60%; margin-bottom: 30px"
+          @click.native.prevent="handleLoginOrSignup"
+          >{{ signupOrLogin }}</el-button
+        >
+        <el-switch v-model="isLogin" style="width: 10%; margin-left: 5%"></el-switch>
+        <span style="color: #fff">shift to {{ isLogin ? "signup" : "login" }}</span>
       </div>
 
+      <div class="tips">
+        <div v-if="!isLogin"> username: 1 to 30 characters</div>
+        <div> password: large than 6 digits</div>
+        <div> email: can be right, wrong or non-exist</div>
+      </div>
     </el-form>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validUsername } from "@/utils/validate";
 
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error("Please enter the correct user name"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error("The password can not be less than 6 digits"));
       } else {
-        callback()
+        callback();
       }
-    }
-    const validateRepeatPassword = (rule,value,callback) => {
+    };
+    const validateRepeatPassword = (rule, value, callback) => {
       if (value != this.password && !this.isLogin) {
-        callback(new Error('Two passwords should be consistent'))
+        callback(new Error("Two passwords should be consistent"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       loginForm: {
-        username: '',
-        password: '',
-        repeatPassword: ''
+        name: "",
+        password: "",
+        repeatPassword: "",
+        email: "",
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        repeatPassword:[{required:true, trigger: 'blur',validator:validateRepeatPassword}]
+        username: [{ required: true, trigger: "blur", validator: validateUsername }],
+        password: [{ required: true, trigger: "blur", validator: validatePassword }],
+        repeatPassword: [
+          { required: true, trigger: "blur", validator: validateRepeatPassword },
+        ],
       },
       loading: false,
-      passwordType: 'password',
+      passwordType: "password",
       redirect: undefined,
       isLogin: true,
-    }
+    };
   },
-  computed:{
+  computed: {
     signupOrLogin() {
-      return this.isLogin ? "Login" : "Signup"
-    }
+      return this.isLogin ? "Login" : "Signup";
+    },
   },
   watch: {
     $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
+      handler: function (route) {
+        this.redirect = route.query && route.query.redirect;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   methods: {
     showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
+      if (this.passwordType === "password") {
+        this.passwordType = "";
       } else {
-        this.passwordType = 'password'
+        this.passwordType = "password";
       }
+      // 不是很懂这个
       this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
+        this.$refs.password.focus();
+      });
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
+          this.loading = true;
+          this.$store
+            .dispatch("user/login", this.loginForm)
+            .then(() => {
+              this.$router.push({ path: this.redirect || "/" });
+              this.loading = false;
+            })
+            .catch(() => {
+              this.loading = false;
+            });
         } else {
-          console.log('error submit!!')
-          return false
+          console.log("error submit!!");
+          return false;
         }
-      })
+      });
     },
-    handleSignup(){
-      console.log("here2")
-    }
-    ,
+    handleSignup() {
+      console.log("here2");
+    },
     handleLoginOrSignup() {
-        if(this.isLogin) {
-          this.handleLogin()
-        } else {
-          this.handleSignup()
-        }
-    }
-  }
-}
+      if (this.isLogin) {
+        this.handleLogin();
+      } else {
+        this.handleSignup();
+      }
+    },
+  },
+};
 </script>
 
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
-$light_gray:#fff;
+$bg: #283443;
+$light_gray: #fff;
 $cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -220,9 +253,9 @@ $cursor: #fff;
 </style>
 
 <style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
@@ -245,11 +278,11 @@ $light_gray:#eee;
     margin-bottom: 10px;
     margin-top: 10ps;
 
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
+    // span {
+    //   &:first-of-type {
+    //     margin-right: 16px;
+    //   }
+    // }
   }
 
   .svg-container {

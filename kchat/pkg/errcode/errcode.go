@@ -72,6 +72,32 @@ func (e *Error) StatusCode() int {
 		return http.StatusUnauthorized
 	case TooManyRequests.Code():
 		return http.StatusTooManyRequests
+	case ErrorGetUserInfoFail.Code():
+		return http.StatusBadRequest
+	case ErrorSignUpFail.Code():
+		return http.StatusBadRequest
+	case ErrorDuplicateUserWithEmail.Code():
+		return http.StatusBadRequest
+	case ErrorHashPasswordFail.Code():
+		return http.StatusBadRequest
+	case ErrorInvalidPassword.Code():
+		return http.StatusBadRequest
+	case ErrorTokenGenerateFail.Code():
+		return http.StatusBadRequest
+	case ErrorSignOutFail.Code():
+		return http.StatusBadRequest
+	case ErrorSignInFail.Code():
+		return http.StatusBadRequest
+	case ErrorAddChatRoomFail.Code():
+		return http.StatusBadRequest
+	case ErrorAddUserToChatRoomFail.Code():
+		return http.StatusBadRequest
+	case ErrorGetChatRoomInfoFail.Code():
+		return http.StatusBadRequest
+	case ErrorNoRightToAccessRoom.Code():
+		return http.StatusBadRequest
+	case ErrorUploadFileFail.Code():
+		return http.StatusBadRequest
 	}
 
 	return http.StatusInternalServerError

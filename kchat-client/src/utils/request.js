@@ -5,8 +5,9 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
+  baseURL: 'http://localhost:8000',
   timeout: 5000 // request timeout
 })
 
@@ -41,44 +42,34 @@ service.interceptors.response.use(
    * Determine the request status by custom code
    * Here is just an example
    * You can also judge the status by HTTP Status Code
+   * 你他妈这么写了那我http状态码还有个几把意义,什么精神污染
    */
   response => {
     const res = response.data
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
-    }
+    return res
   },
   error => {
-    console.log('err' + error) // for debug
+    const res = error.response.data
+    console.log(res)
     Message({
-      message: error.message,
+      message: res.msg || 'Error',
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error)
+    // token失效
+    if (res.code === 10000004 || res.code === 10000005){
+      // to re-login
+      MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+        confirmButtonText: 'Re-Login',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
+        })
+      })
+    }
+    return Promise.reject(new Error(res.message || 'Error'))
   }
 )
 

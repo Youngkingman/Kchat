@@ -28,7 +28,7 @@ func Signin(c *gin.Context) {
 	u, err := model.GetUserByEmail(c, req.Email)
 	if err != nil {
 		global.Logger.Errorf(c, "fail to sign in with errs %v", err)
-		resp.ToErrorResponse(errcode.ErrorGetUserInfoFail.WithDetails(err.Error()))
+		resp.ToErrorResponse(errcode.ErrorDuplicateUserWithEmail.WithDetails(err.Error()))
 		return
 	}
 	storePsw := u.Password
@@ -36,10 +36,11 @@ func Signin(c *gin.Context) {
 
 	if err != nil {
 		global.Logger.Errorf(c, "fail to sign in with errs %v", err)
-		resp.ToErrorResponse(errcode.ErrorSignInFail.WithDetails(err.Error()))
+		resp.ToErrorResponse(errcode.ErrorHashPasswordFail.WithDetails(err.Error()))
 		return
 	}
 	if !ok {
+		global.Logger.Errorf(c, "wrong password, fail to sign in with errs %v", err)
 		resp.ToErrorResponse(errcode.ErrorInvalidPassword)
 		return
 	}
@@ -47,6 +48,7 @@ func Signin(c *gin.Context) {
 	// 生成token
 	token, err := app.GenerateToken(u)
 	if err != nil {
+		global.Logger.Errorf(c, "fail to generate token with errs %v", err)
 		resp.ToErrorResponse(errcode.ErrorTokenGenerateFail)
 		return
 	}
@@ -54,5 +56,11 @@ func Signin(c *gin.Context) {
 	err = model.SetToken(u.Email, token)
 	// 回传tokenh和用户数据
 	u.Password = ""
+	if err != nil {
+		global.Logger.Errorf(c, "fail to set token with errs %v", err)
+		resp.ToErrorResponse(errcode.ErrorTokenGenerateFail)
+		return
+	}
+
 	resp.ToResponse(gin.H{"token": token, "user": u})
 }

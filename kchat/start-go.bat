@@ -1,0 +1,2 @@
+go build
+./kchat.exe
