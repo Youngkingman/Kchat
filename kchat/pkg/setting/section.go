@@ -13,6 +13,7 @@ type ServerSettingS struct {
 
 type AppSettingS struct {
 	DefaultPageSize       int
+	DefaultAvatar         string
 	MaxPageSize           int
 	DefaultContextTimeout time.Duration
 	LogSavePath           string

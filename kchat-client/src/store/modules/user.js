@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, signup } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -70,6 +70,20 @@ const actions = {
         commit('RESET_STATE')
         resolve()
       }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  signup({ commit }, signupInfo ){
+    const { name, email, password, repeatPassword } = signupInfo
+    return new Promise((resolve,reject) => {
+      signup({ name:name, email:email, password:password, repeatPassword:repeatPassword }).then(response => {
+        commit('SET_TOKEN', response.token)
+        setToken(response.token)
+        resolve()
+      }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })

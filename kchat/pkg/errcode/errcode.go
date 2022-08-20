@@ -98,6 +98,8 @@ func (e *Error) StatusCode() int {
 		return http.StatusBadRequest
 	case ErrorUploadFileFail.Code():
 		return http.StatusBadRequest
+	case ErrorRepeatPswInconsist.Code():
+		return http.StatusBadRequest
 	}
 
 	return http.StatusInternalServerError

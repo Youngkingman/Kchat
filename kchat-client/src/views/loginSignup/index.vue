@@ -12,13 +12,13 @@
         <h3 class="title">{{ signupOrLogin }}</h3>
       </div>
 
-      <el-form-item prop="name" v-show="!isLogin">
+      <el-form-item v-show="!isLogin" prop="name" >
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
           ref="name"
-          v-model="loginForm.username"
+          v-model="loginForm.name"
           placeholder="Username"
           name="name"
           type="text"
@@ -62,7 +62,7 @@
         </span>
       </el-form-item>
 
-      <el-form-item prop="repeatPassword" v-show="!isLogin">
+      <el-form-item v-show="!isLogin" prop="repeatPassword">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
@@ -120,13 +120,14 @@ export default {
         callback();
       }
     };
-    const validateRepeatPassword = (rule, value, callback) => {
-      if (value != this.password && !this.isLogin) {
-        callback(new Error("Two passwords should be consistent"));
-      } else {
-        callback();
-      }
-    };
+    // const validateRepeatPassword = (rule, value, callback) => {
+    //   if (value !== this.password && !this.isLogin) {
+    //     console.log("here",value)
+    //     callback(new Error("Two passwords should be consistent"));
+    //   } else {
+    //     callback();
+    //   }
+    // };
     return {
       loginForm: {
         name: "",
@@ -135,11 +136,9 @@ export default {
         email: "",
       },
       loginRules: {
-        username: [{ required: true, trigger: "blur", validator: validateUsername }],
+        name: [{ trigger: "blur", validator: validateUsername }],
         password: [{ required: true, trigger: "blur", validator: validatePassword }],
-        repeatPassword: [
-          { required: true, trigger: "blur", validator: validateRepeatPassword },
-        ],
+        // 很烦，不会校验，让后端来吧
       },
       loading: false,
       passwordType: "password",
@@ -172,12 +171,13 @@ export default {
         this.$refs.password.focus();
       });
     },
-    handleLogin() {
+    handleLoginOrSignup() { 
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
+          const dispatchPath = this.isLogin ? "user/login" : "user/signup"
           this.$store
-            .dispatch("user/login", this.loginForm)
+            .dispatch(dispatchPath, this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;
@@ -190,16 +190,6 @@ export default {
           return false;
         }
       });
-    },
-    handleSignup() {
-      console.log("here2");
-    },
-    handleLoginOrSignup() {
-      if (this.isLogin) {
-        this.handleLogin();
-      } else {
-        this.handleSignup();
-      }
     },
   },
 };

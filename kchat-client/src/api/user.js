@@ -12,14 +12,14 @@ export function getInfo(token) {
   return request({
     url: '/home/userinfo',
     method: 'get',
-    // headers: { 'token':token }
-    params: { token }
+    headers: { 'token':token }
+    // params: { token }
   })
 }
 
 export function logout() {
   return request({
-    url: '/signout',
+    url: '/home/signout',
     method: 'post'
   })
 }

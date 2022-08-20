@@ -13,5 +13,6 @@ var (
 	ErrorAddUserToChatRoomFail  = NewError(20002009, "加入用户失败")
 	ErrorGetChatRoomInfoFail    = NewError(20002010, "获取房间信息失败")
 	ErrorNoRightToAccessRoom    = NewError(20002011, "没有进入房间权利")
+	ErrorRepeatPswInconsist     = NewError(2002012, "密码不一致")
 	ErrorUploadFileFail         = NewError(20030001, "上传文件失败")
 )
