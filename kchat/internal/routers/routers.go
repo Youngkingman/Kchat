@@ -4,14 +4,13 @@ import (
 	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/controller"
 	"github.com/Youngkingman/Kchat/kchat/internal/middleware"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
-	r.Use(cors.Default()) //debug模式下不配置nginx只能先允许所有跨域
 	if global.ServerSetting.RunMode == "debug" {
+		r.Use(middleware.Cors()) //debug模式下不配置nginx只能先允许所有跨域
 		r.Use(gin.Logger())
 		r.Use(gin.Recovery())
 		// r.Use(middleware.Tracing())

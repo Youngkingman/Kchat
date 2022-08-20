@@ -28,7 +28,7 @@ func Signin(c *gin.Context) {
 	u, err := model.GetUserByEmail(c, req.Email)
 	if err != nil {
 		global.Logger.Errorf(c, "fail to sign in with errs %v", err)
-		resp.ToErrorResponse(errcode.ErrorDuplicateUserWithEmail.WithDetails(err.Error()))
+		resp.ToErrorResponse(errcode.ErrorInvalidPassword.WithDetails(err.Error()))
 		return
 	}
 	storePsw := u.Password
