@@ -165,8 +165,7 @@ export default {
         this.passwordType = "";
       } else {
         this.passwordType = "password";
-      }
-      // 不是很懂这个
+      } 
       this.$nextTick(() => {
         this.$refs.password.focus();
       });
