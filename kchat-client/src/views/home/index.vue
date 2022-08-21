@@ -24,6 +24,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { addchatroomuser } from '@/api/chatroom'
+import { MessageBox, Message } from 'element-ui'
 
 export default {
   name: 'Home',
@@ -44,6 +45,11 @@ export default {
       this.loading[n] = true;
       addchatroomuser({ uids:[this.uid], rid:n }).then(() => {
         this.loading[n] = false;
+        Message({
+        message: 'Signup For Chatroom'+n+' Success',
+        type: 'success',
+        duration: 2 * 1000
+      })
       })
     }
   },
