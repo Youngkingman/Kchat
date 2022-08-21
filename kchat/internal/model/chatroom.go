@@ -68,7 +68,7 @@ func AddUserSToChatRoom(ctx context.Context, rid int, uids []int) (err error) {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(dbutil.Prefix("UPDATE #__chatroom SET users=?"), string(userBytes))
+	_, err = tx.Exec(dbutil.Prefix("UPDATE #__chatroom SET users=? WHERE room_id=?"), string(userBytes), rid)
 	return
 }
 
