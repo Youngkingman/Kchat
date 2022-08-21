@@ -41,7 +41,7 @@ func NewRouter() *gin.Engine {
 		chat.GET("/chatterlist", middleware.AuthJWT(), controller.ChatRoomChatterList)
 		// The following api are under further establishment
 		chat.POST("/addchatroom", controller.AddChatRoomTest)
-		chat.POST("/addchatroomuser", controller.AddUserSToChatRoomTest)
+		chat.PUT("/addchatroomuser", controller.AddUserSToChatRoomTest)
 		chat.GET("/getallinfo", controller.GetAllChatRoomTest)
 		chat.GET("/getroominfo", controller.GetChatRoomByRoomIdTest)
 	}

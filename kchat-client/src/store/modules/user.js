@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    uid: '0'
   }
 }
 
@@ -24,6 +25,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_UID: (state, uid) => {
+    state.uid = uid
   }
 }
 
@@ -51,9 +55,10 @@ const actions = {
         if (!response) {
           return reject('Verification failed, please Login again.')
         }
-        const { name,  img_url} = response
+        const { name, img_url, uid } = response
         commit('SET_NAME', name)
         commit('SET_AVATAR', img_url)
+        commit('SET_UID', uid)
         resolve()
       }).catch(error => {
         reject(error)

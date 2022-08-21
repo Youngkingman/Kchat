@@ -12,12 +12,14 @@ import (
 type ChatRoom struct {
 	RoomID int          `json:"room_id"`
 	Name   string       `json:"name"`
+	Avatar string       `json:"img_url"`
 	Users  map[int]bool `json:"users"`
 }
 
 type tranChatRoom struct {
 	RoomID int    `json:"room_id"`
 	Name   string `json:"name"`
+	Avatar string `json:"img_url"`
 	Users  string `json:"users"`
 }
 

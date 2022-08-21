@@ -6,10 +6,14 @@
         <el-button round
           type="success"
           style="margin-bottom: 10px;margin-top: 10px;"
+          :loading="loading[1]"
+          @click.native.prevent="handleAddroom(1)"
         >chatroom 1</el-button>
         <el-button round
           type="primary"
           style="margin-bottom: 10px;margin-top: 10px;"
+          :loading="loading[2]"
+          @click.native.prevent="handleAddroom(2)"
         >chatroom 2</el-button>
     </el-row>
     <el-divider></el-divider>
@@ -19,19 +23,30 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { addchatroomuser } from '@/api/chatroom'
 
 export default {
   name: 'Home',
   computed: {
     ...mapGetters([
-      'name'
+      'name',
+      'uid'
     ])
   },
   data(){
     return {
-        date: new Date()
+        date: new Date(),
+        loading: [false,false],
     }
-  }
+  },
+  methods: {
+    handleAddroom(n) {
+      this.loading[n] = true;
+      addchatroomuser({ uids:[this.uid], rid:n }).then(() => {
+        this.loading[n] = false;
+      })
+    }
+  },
 }
 </script>
 
