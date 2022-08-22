@@ -12,12 +12,14 @@ import (
 type ChatRoom struct {
 	RoomID int          `json:"room_id"`
 	Name   string       `json:"name"`
+	Avatar string       `json:"img_url"`
 	Users  map[int]bool `json:"users"`
 }
 
 type tranChatRoom struct {
 	RoomID int    `json:"room_id"`
 	Name   string `json:"name"`
+	Avatar string `json:"img_url"`
 	Users  string `json:"users"`
 }
 
@@ -66,7 +68,7 @@ func AddUserSToChatRoom(ctx context.Context, rid int, uids []int) (err error) {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(dbutil.Prefix("UPDATE #__chatroom SET users=?"), string(userBytes))
+	_, err = tx.Exec(dbutil.Prefix("UPDATE #__chatroom SET users=? WHERE room_id=?"), string(userBytes), rid)
 	return
 }
 

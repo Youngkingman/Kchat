@@ -34,14 +34,14 @@ func NewRouter() *gin.Engine {
 	}
 	// websocket相关路由
 	chat := r.Group("/chat")
-	//chat.Use(middleware.AuthJWT())
+	chat.Use(middleware.AuthJWT())
 	{
-		chat.Any("/ws", middleware.AuthJWT(), controller.ChatroomWebsocket)
+		chat.Any("/ws", controller.ChatroomWebsocket)
 		// chat.GET("/roompage", controller.ChatroomHomePage)
 		chat.GET("/chatterlist", middleware.AuthJWT(), controller.ChatRoomChatterList)
 		// The following api are under further establishment
 		chat.POST("/addchatroom", controller.AddChatRoomTest)
-		chat.POST("/addchatroomuser", controller.AddUserSToChatRoomTest)
+		chat.PUT("/addchatroomuser", controller.AddUserSToChatRoomTest)
 		chat.GET("/getallinfo", controller.GetAllChatRoomTest)
 		chat.GET("/getroominfo", controller.GetChatRoomByRoomIdTest)
 	}
