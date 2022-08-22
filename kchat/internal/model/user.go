@@ -34,7 +34,7 @@ func GetUserByEmail(ctx context.Context, email string) (u *User, err error) {
 }
 
 func AddUser(ctx context.Context, u *User) (err error) {
-	s := `INSERT INTO #__user (name, email, password)  VALUES (?,?,?);`
-	_, err = global.MySQL.Exec(dbutil.Prefix(s), u.Name, u.Email, u.Password)
+	s := `INSERT INTO #__user (name, email, password, img_url, website)  VALUES (?,?,?,?,?);`
+	_, err = global.MySQL.Exec(dbutil.Prefix(s), u.Name, u.Email, u.Password, u.ImageURL, u.Website)
 	return
 }
