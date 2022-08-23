@@ -14,6 +14,8 @@ const (
 type Message struct {
 	RoomID         int       `json:"room_id"`
 	UID            int       `json:"chatter"`
+	Name           string    `json:"name"`
+	Avatar         string    `json:"avatar"`
 	Type           int       `json:"type"`
 	Content        string    `json:"content"`
 	MsgTime        time.Time `json:"msg_time"`

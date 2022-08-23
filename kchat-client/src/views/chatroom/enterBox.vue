@@ -25,7 +25,7 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: '请输入内容...'
+      default: 'Say something...'
     },
     value: {
       type: String,

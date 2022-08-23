@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="notice" style="resolve">
       <JwChat-empty class="empty" v-if="!info.notice" size="8rem" />
-      <P style="padding-left: 0.2rem">{{ info.tip }}</P>
+      <p class="annoucement">{{ info.tip }}</p>
       <p style="font-size: 0.8rem; margin-top: 0.5rem; padding: 0 0.2rem">
         {{ info.notice }}
       </p>
@@ -63,10 +63,10 @@ export default {
   computed: {
     info() {
       const {
-        tip = "群公告:",
+        tip = "Group Announcement",
         notice = "",
-        listTip = "组成员",
-        filterTip = "搜索好友",
+        listTip = "Group Member",
+        filterTip = "Search Users",
       } = this.config;
       return {
         tip,
@@ -76,13 +76,13 @@ export default {
       };
     },
     dataList() {
-      const { list = [] } = this.config;
+      const { chatterlist = [] } = this.config;
       const filter = this.filter;
-      if (!filter) return list;
+      if (!filter) return chatterlist;
 
       const filterArr = [];
       const reg = new RegExp(filter, "g");
-      list.forEach((i) => {
+      chatterlist.forEach((i) => {
         const { name } = i;
         if (reg.test(name)) filterArr.push(i);
       });
@@ -124,6 +124,10 @@ export default {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
+    }
+    .annoucement{
+      text-align: center; 
+      font-size: 20px;
     }
   }
   .userList {

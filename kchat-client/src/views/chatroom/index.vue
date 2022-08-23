@@ -1,55 +1,75 @@
 <template>
-  <el-row class="chatroom-container" :gutter="5">
-    <el-col :span="18">
-      <div class="chatroom-chatarea">
-        <KChat
-          :taleList="list"
-          @enter="bindEnter"
-          @clickTalk="talkEvent"
-          v-model="inputMsg"
-          :toolConfig="tool"
-          :quickList="quickList"
-          scrollType="scroll"
-          style="height: 100%;"
-          width="100%"
-          height="120%"
-        >
-          <template slot="tools">
-            <div style="width:20rem; text-align: right" @click="toolEvent('自定义')">
-              <b slot="tools"></b>
-              <JwChat-icon type="icon-lishi" title="自定义" />
-            </div>
-          </template>
-        </KChat>
-      </div>
-    </el-col>
-    <el-col :span="6">
-      <div class="chatroom-sideinfo">
-        Something To Do
-      </div>
-    </el-col>
-  </el-row>
+  <div class="chatroom-container">
+    <el-row class="chatroom-layout" :gutter="5">
+      <el-col :span="18">
+        <div class="chatroom-chatarea">
+          <KChat
+            :taleList="list"
+            @enter="bindEnter"
+            @clickTalk="talkEvent"
+            v-model="inputMsg"
+            :toolConfig="tool"
+            :quickList="quickList"
+            scrollType="scroll"
+            style="height: 100%;"
+            width="100%"
+            height="120%"
+          >
+            <template slot="tools">
+              <div style="width:20rem; text-align: right" @click="toolEvent('自定义')">
+                <b slot="tools"></b>
+              </div>
+            </template>
+          </KChat>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="chatroom-sideinfo">
+          <RightList :config="rightConfig" @click="rightClick"></RightList>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
 import KChat from './kchat.vue'
+import RightList from './rightList.vue'
 
 export default {
   components: {
-    KChat
-  },
+    KChat,
+    RightList,
+},
   data() {
     return {
       inputMsg: "",
       list: [],
       tool: {
-        show:  ["file", "video", "img", "hongbao", "more", "history"],
+        show:  ["file", "video", "img"],
         showEmoji: true,
         callback: this.toolEvent
       }, 
       quickList: [
         { text: "stupid list" }
       ],
+      rightConfig: {
+        listTip: 'Curruent Online',
+        chatterlist: [
+          {
+            name: 'JwChat',
+            "img": "../image/three.jpeg"
+          },
+          {
+            name: '留恋人间不羡仙',
+            "img": "../image/one.jpeg"
+          },
+          {
+            name: '只盼流星不盼雨',
+            "img": "../image/two.jpeg"
+          }
+        ]
+      }
     };
   },
   methods: {
@@ -186,7 +206,7 @@ export default {
 
 <style lang="scss" scoped>
 .chatroom {
-  &-container{
+  &-layout{
     margin-top: 30px;
     padding-left: 15px;
     padding-right: 15px;
@@ -195,7 +215,7 @@ export default {
     box-shadow: 0 0 8px 8px rgba(107, 105, 104, 0.9);
     margin-top: 0;
     width: 98%;
-    height: 800px;
+    height: 620px;
   }
   &-sideinfo {
     margin-top: 0;
