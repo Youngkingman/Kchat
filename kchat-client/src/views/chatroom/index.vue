@@ -1,5 +1,6 @@
 <template>
   <div class="chatroom-container">
+  <el-button plain @click.native.prevent="this.fetchChatterList(1)"></el-button>
     <el-row class="chatroom-layout" :gutter="5">
       <el-col :span="18">
         <div class="chatroom-chatarea">
@@ -35,6 +36,7 @@
 <script>
 import KChat from './kchat.vue'
 import RightList from './rightList.vue'
+import getChatters from '@/api/chatroom'
 
 export default {
   components: {
@@ -73,6 +75,10 @@ export default {
     };
   },
   methods: {
+    fetchChatterList(rid) {
+      console.log(rid)
+      getChatters(rid).then(()=>{console.log("fuck")}).catch(()=>{console.log("you")})
+    },
     bindEnter(e) {
       console.log(e);
       const msg = this.inputMsg;
@@ -95,6 +101,8 @@ export default {
     rightClick(type) {
       console.log("rigth", type);
     },
+    // fetchChatterList(rid) {
+    // }
   },
   mounted() {
     const img = "https://www.baidu.com/img/flexible/logo/pc/result.png";

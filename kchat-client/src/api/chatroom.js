@@ -7,3 +7,11 @@ export function addchatroomuser(data) {
     data
   })
 }
+
+export function getChatters(rid) {
+  return request({
+    url: '/chat/chatterlist',
+    method: 'get',
+    params: { rid }
+  })
+}

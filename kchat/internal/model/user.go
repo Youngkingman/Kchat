@@ -9,9 +9,9 @@ import (
 
 type User struct {
 	UID      int    `json:"uid"`
+	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	Name     string `json:"name"`
 	ImageURL string `json:"img_url"`
 	Website  string `json:"website"`
 }

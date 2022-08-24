@@ -24,7 +24,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { addchatroomuser } from '@/api/chatroom'
-import { MessageBox, Message } from 'element-ui'
+import { Message } from 'element-ui'
 
 export default {
   name: 'Home',

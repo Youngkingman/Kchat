@@ -126,3 +126,40 @@ func GetAllChatRoom(ctx context.Context) ([]*ChatRoom, error) {
 	}
 	return ret, nil
 }
+
+func GetAllUserFromChatRoom(ctx context.Context, rid int) (users []*User, err error) {
+	tx, err := global.MySQL.Begin()
+	defer func() {
+		if err != nil {
+			global.Logger.Errorf(ctx, "something failed with error: %s\n", err)
+			tx.Rollback() //事务回滚
+			return
+		}
+		err = tx.Commit()
+	}()
+	// 获取用户列表
+	usersStr := ""
+	err = tx.QueryRow(dbutil.Prefix("SELECT users FROM #__chatroom WHERE room_id=?"), rid).Scan(&usersStr)
+	if err != nil {
+		return nil, err
+	}
+	usersArr := make([]int, 0)
+	err = json.Unmarshal([]byte(usersStr), &usersArr)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(usersArr)
+	for _, v := range usersArr {
+		user := &User{}
+		fmt.Println(v)
+		fmt.Print(err)
+		err = tx.QueryRow(dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"), v).Scan(&user.UID, &user.Name, &user.Email, &user.Password, &user.ImageURL, &user.Website)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = ""
+		fmt.Println(user)
+		users = append(users, user)
+	}
+	return
+}
