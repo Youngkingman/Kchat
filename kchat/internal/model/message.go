@@ -8,16 +8,17 @@ const (
 	MsgTypeUserEnter        // 用户进入
 	MsgTypeUserLeave        // 用户退出
 	MsgTypeError            // 错误消息
-	MsgTypeImage            // 图片数据, 此时content为文件服务器url
+	MsgTypeImage            // 图片数据, 此时content为文件服务器url的html标签
 )
 
+// 用别人模板有些字段不太一样，以后再来优化
 type Message struct {
 	RoomID         int       `json:"room_id"`
-	UID            int       `json:"chatter"`
+	UID            int       `json:"uid"`
 	Name           string    `json:"name"`
-	Avatar         string    `json:"avatar"`
+	Avatar         string    `json:"img"`
 	Type           int       `json:"type"`
-	Content        string    `json:"content"`
+	Content        string    `json:"text"`
 	MsgTime        time.Time `json:"msg_time"`
 	ClientSendTime time.Time `json:"client_send_time"`
 	Ats            []string  `json:"ats"` // 消息 @ 了谁

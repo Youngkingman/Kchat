@@ -148,17 +148,13 @@ func GetAllUserFromChatRoom(ctx context.Context, rid int) (users []*User, err er
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(usersArr)
 	for _, v := range usersArr {
 		user := &User{}
-		fmt.Println(v)
-		fmt.Print(err)
 		err = tx.QueryRow(dbutil.Prefix("SELECT * FROM #__user WHERE uid=?"), v).Scan(&user.UID, &user.Name, &user.Email, &user.Password, &user.ImageURL, &user.Website)
 		if err != nil {
 			return nil, err
 		}
 		user.Password = ""
-		fmt.Println(user)
 		users = append(users, user)
 	}
 	return

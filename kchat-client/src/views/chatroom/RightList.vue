@@ -21,7 +21,7 @@
         <div class="scrollBox" ref="scrollBox">
           <ul>
             <li v-for="(item, k) in dataList" :key="k">
-              <JwChat-item size="25" :config="item" @click="bindClick" />
+              <JwChat-item size="45" :config="item" @click="bindClick" />
             </li>
           </ul>
         </div>
@@ -76,13 +76,13 @@ export default {
       };
     },
     dataList() {
-      const { chatterlist = [] } = this.config;
+      const { userlist = [] } = this.config;
       const filter = this.filter;
-      if (!filter) return chatterlist;
+      if (!filter) return userlist;
 
       const filterArr = [];
       const reg = new RegExp(filter, "g");
-      chatterlist.forEach((i) => {
+      userlist.forEach((i) => {
         const { name } = i;
         if (reg.test(name)) filterArr.push(i);
       });
@@ -152,8 +152,8 @@ export default {
     }
     li {
       list-style: none;
-      height: 2rem;
-      line-height: 2rem;
+      height: 3rem;
+      line-height: 4rem;
       padding: 0.2rem;
     }
   }

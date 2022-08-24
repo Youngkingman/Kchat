@@ -142,65 +142,7 @@ export default {
       let html = emojiParser(text).replace(/<img src/g, '<img data-class="iconBox" src')
       html = html.replace('https://res.wx.qq.com/wxdoc/dist/assets/img/emoji-sprite.b5bd1fe0.png', emojiPng)
       return html
-    },
-    //处理排版
-    /*  handleDetail (html = '') {
-       let tag = 'span'
-       let options = {}
-       if (this.isObject(html)) {
-         const { type, content } = html
-         tag = type
-         options = content
-       } else {
-         tag = this.getTag(html)
-       }
- 
-       this.createdElement(tag, content)
- 
-       let result = html;
-       result = emojiParser(result).replace(/(<img src)/g, '<img data-class="iconBox" data-src')
-       setTimeout(() => {
-         const list = this.$refs.content;
-         list.forEach(ele => {
-           for (let i = 0; i < ele.children.length; i++) {
-             const child = ele.children[i];
-             child.onload = this.childnodeLoad
-             // console.log(child.parentNode)
-             if (child.getAttribute('data-flag') != 0) {
-               child.setAttribute('data-flag', 0)
-               child.onclick = () => {
-                 this.handleEvent(child)
-               };
-               if (child.tagName === 'IMG') {
-                 child.className = 'web__msg--img'
-                 const icon = child.getAttribute('data-class')
-                 if (icon !== 'iconBox') child.type = "IMG"
-                 child.src = child.getAttribute('data-src')
-               } else if (child.tagName === 'VIDEO') {
-                 child.type = "VIDEO"
-                 child.className = 'web__msg--video'
-                 child.src = child.getAttribute('data-src')
-               } else if (child.tagName === 'AUDIO') {
-                 child.type = "AUDIO"
-                 child.className = 'web__msg--audio'
-                 child.controls = 'controls';
-                 child.src = child.getAttribute('data-src')
-               } else if (child.tagName === 'FILE') {
-                 child.type = "FILE"
-                 child.className = 'web__msg--file'
-                 child.innerHTML = `<h2>File</h2><span>${child.getAttribute('data-name')}</span>`
-               } else if (child.tagName === 'MAP') {
-                 child.type = "MAP"
-                 child.className = 'web__msg--file web__msg--map'
-                 child.innerHTML = `<h2>Map</h2><span>${child.getAttribute('data-longitude')} , ${child.getAttribute('data-latitude')}<br />${child.getAttribute('data-address')}</span>`
-               }
-             }
-           }
-         });
-         console.log('n')
-       }, 200)
-       return result;
-     }, */
+    }
   },
   mounted(){
     const type = this.getTag

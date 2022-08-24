@@ -46,11 +46,6 @@ export default {
     },
     toolConfig: {
       type: Object
-      // default: () => ({
-      //   show: [],
-      //   showEmoji: true,
-      //   callback: Function
-      // })
     },
     config: {},
     quickList: {

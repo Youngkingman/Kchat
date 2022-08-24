@@ -1,6 +1,5 @@
 <template>
   <div class="chatroom-container">
-  <el-button plain @click.native.prevent="this.fetchChatterList(1)"></el-button>
     <el-row class="chatroom-layout" :gutter="5">
       <el-col :span="18">
         <div class="chatroom-chatarea">
@@ -36,7 +35,8 @@
 <script>
 import KChat from './kchat.vue'
 import RightList from './rightList.vue'
-import getChatters from '@/api/chatroom'
+import { getUsers } from '@/api/chatroom'
+import { dateFormat } from '@/utils/dateparse'
 
 export default {
   components: {
@@ -57,34 +57,25 @@ export default {
       ],
       rightConfig: {
         listTip: 'Curruent Online',
-        chatterlist: [
-          {
-            name: 'JwChat',
-            "img": "../image/three.jpeg"
-          },
-          {
-            name: '留恋人间不羡仙',
-            "img": "../image/one.jpeg"
-          },
-          {
-            name: '只盼流星不盼雨',
-            "img": "../image/two.jpeg"
-          }
+        userlist: [ // 房间所有用户列表
         ]
-      }
+      },
+      chatterlist: [// 房间在线用户列表暂时没考虑用
+      ]
     };
   },
   methods: {
-    fetchChatterList(rid) {
-      console.log(rid)
-      getChatters(rid).then(()=>{console.log("fuck")}).catch(()=>{console.log("you")})
+    fetchChatters(rid) {
+      getUsers(rid).then(response => {
+       this.rightConfig.userlist = response 
+      })
     },
     bindEnter(e) {
-      console.log(e);
+      // console.log(e);
       const msg = this.inputMsg;
       if (!msg) return;
       const msgObj = {
-        date: new Date().toTimeString(),
+        date:  dateFormat('YYYY/mm/dd HH:MM:SS',new Date()),
         text: { text: msg },
         mine: true,
         name: "JwChat",
@@ -104,8 +95,10 @@ export default {
     // fetchChatterList(rid) {
     // }
   },
+  created() {
+    this.fetchChatters(1);
+  },
   mounted() {
-    const img = "https://www.baidu.com/img/flexible/logo/pc/result.png";
     const list = [
       {
         date: "2020/04/25 21:19:07",
@@ -114,98 +107,98 @@ export default {
         name: "留恋人间不羡仙",
         img: "/image/one.jpeg",
       },
-      {
-        date: "2020/04/25 21:19:07",
-        text: { text: "<audio data-src='https://www.w3school.com.cn/i/horse.mp3'/>" },
-        mine: false,
-        name: "只盼流星不盼雨",
-        img: "/image/two.jpeg",
-      },
-      {
-        date: "2020/04/25 21:19:07",
-        text: { text: "<img data-src='" + img + "'/>" },
-        mine: false,
-        name: "只盼流星不盼雨",
-        img: "/image/two.jpeg",
-      },
-      {
-        date: "2020/04/25 21:19:07",
-        text: { text: "<img data-src='/image/three.jpeg'/>" },
-        mine: false,
-        name: "只盼流星不盼雨",
-        img: "/image/two.jpeg",
-      },
-      {
-        date: "2020/04/16 21:19:07",
-        text: {
-          text:
-            "<video data-src='https://www.w3school.com.cn/i/movie.mp4' controls='controls' />",
-        },
-        mine: true,
-        name: "JwChat",
-        img: "/image/three.jpeg",
-      },
-      {
-        date: "2021/03/02 13:14:21",
-        mine: false,
-        name: "留恋人间不羡仙",
-        img: "/image/one.jpeg",
-        text: {
-          system: {
-            title: "在接入人工前，智能助手将为您首次应答。",
-            subtitle: "猜您想问:",
-            content: [
-              {
-                id: `system1`,
-                text: "组件如何使用",
-              },
-              {
-                id: `system2`,
-                text: "组件参数在哪里查看",
-              },
-              {
-                id: "system",
-                text: "我可不可把组件用在商业",
-              },
-            ],
-          },
-        },
-      },
-      {
-        date: "2020/04/25 21:19:07",
-        text: {
-          text: "<i class='el-icon-document-checked' style='font-size:2rem;'/>",
-          subLink: {
-            text: "a.txt",
-            prop: {
-              underline: false,
-            },
-          },
-        },
-        mine: false,
-        name: "留恋人间不羡仙",
-        img: "../image/one.jpeg",
-      },
-      {
-        date: "2020/04/25 21:19:07",
-        mine: false,
-        name: "留恋人间不羡仙",
-        img: "../image/one.jpeg",
-        text: {
-          shop: {
-            title: `2022年寒假读一本好书小学生三四五六年级课外读
-              物阅读书籍经典儿童文学 回到远古和神仙们聊天 王云超著`,
-            describe: "购买1-3件时享受单件价￥18.20，超出数量以结算价为准，仅限购买一次:",
-            price: "999.99",
-            cover: "../image/two.jpeg",
-            tags: [
-              { name: "第二件半价" },
-              { name: "送50元优惠" },
-              { name: "满1件,送50元优惠" },
-            ],
-          },
-        },
-      },
+      // {
+      //   date: "2020/04/25 21:19:07",
+      //   text: { text: "<audio data-src='https://www.w3school.com.cn/i/horse.mp3'/>" },
+      //   mine: false,
+      //   name: "只盼流星不盼雨",
+      //   img: "/image/two.jpeg",
+      // },
+      // {
+      //   date: "2020/04/25 21:19:07",
+      //   text: { text: "<img data-src='" + img + "'/>" },
+      //   mine: false,
+      //   name: "只盼流星不盼雨",
+      //   img: "/image/two.jpeg",
+      // },
+      // {
+      //   date: "2020/04/25 21:19:07",
+      //   text: { text: "<img data-src='/image/three.jpeg'/>" },
+      //   mine: false,
+      //   name: "只盼流星不盼雨",
+      //   img: "/image/two.jpeg",
+      // },
+      // {
+      //   date: "2020/04/16 21:19:07",
+      //   text: {
+      //     text:
+      //       "<video data-src='https://www.w3school.com.cn/i/movie.mp4' controls='controls' />",
+      //   },
+      //   mine: true,
+      //   name: "JwChat",
+      //   img: "/image/three.jpeg",
+      // },
+      // {
+      //   date: "2021/03/02 13:14:21",
+      //   mine: false,
+      //   name: "留恋人间不羡仙",
+      //   img: "/image/one.jpeg",
+      //   text: {
+      //     system: {
+      //       title: "在接入人工前，智能助手将为您首次应答。",
+      //       subtitle: "猜您想问:",
+      //       content: [
+      //         {
+      //           id: `system1`,
+      //           text: "组件如何使用",
+      //         },
+      //         {
+      //           id: `system2`,
+      //           text: "组件参数在哪里查看",
+      //         },
+      //         {
+      //           id: "system",
+      //           text: "我可不可把组件用在商业",
+      //         },
+      //       ],
+      //     },
+      //   },
+      // },
+      // {
+      //   date: "2020/04/25 21:19:07",
+      //   text: {
+      //     text: "<i class='el-icon-document-checked' style='font-size:2rem;'/>",
+      //     subLink: {
+      //       text: "a.txt",
+      //       prop: {
+      //         underline: false,
+      //       },
+      //     },
+      //   },
+      //   mine: false,
+      //   name: "留恋人间不羡仙",
+      //   img: "../image/one.jpeg",
+      // },
+      // {
+      //   date: "2020/04/25 21:19:07",
+      //   mine: false,
+      //   name: "留恋人间不羡仙",
+      //   img: "../image/one.jpeg",
+      //   text: {
+      //     shop: {
+      //       title: `2022年寒假读一本好书小学生三四五六年级课外读
+      //         物阅读书籍经典儿童文学 回到远古和神仙们聊天 王云超著`,
+      //       describe: "购买1-3件时享受单件价￥18.20，超出数量以结算价为准，仅限购买一次:",
+      //       price: "999.99",
+      //       cover: "../image/two.jpeg",
+      //       tags: [
+      //         { name: "第二件半价" },
+      //         { name: "送50元优惠" },
+      //         { name: "满1件,送50元优惠" },
+      //       ],
+      //     },
+      //   },
+      // },
     ];
     this.list = list;
   },

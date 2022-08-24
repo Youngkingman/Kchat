@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/Youngkingman/Kchat/kchat/global"
@@ -11,6 +10,13 @@ import (
 	"github.com/Youngkingman/Kchat/kchat/pkg/errcode"
 	"github.com/gin-gonic/gin"
 )
+
+// 前端需要的数据
+type respUser struct {
+	Uid    int    `json:"uid"`
+	Name   string `json:"name"`
+	Avatar string `json:"img"`
+}
 
 // The users who are allow to this chat room
 func ChatroomUserList(c *gin.Context) {
@@ -28,8 +34,17 @@ func ChatroomUserList(c *gin.Context) {
 		resp.ToErrorResponse(errcode.ErrorGetRoomUserFail.WithDetails(err.Error()))
 		return
 	}
-	fmt.Println(rid)
-	resp.ToResponse(usersList)
+	// 转换成前端想要的
+	respUsers := make([]*respUser, 0)
+	for _, v := range usersList {
+		tmp := &respUser{
+			Uid:    v.UID,
+			Name:   v.Name,
+			Avatar: v.ImageURL,
+		}
+		respUsers = append(respUsers, tmp)
+	}
+	resp.ToResponse(respUsers)
 }
 
 func ChatRoomChatterList(c *gin.Context) {
