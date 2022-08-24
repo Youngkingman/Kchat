@@ -3,7 +3,6 @@ package service
 import (
 	"errors"
 	"io"
-	"regexp"
 
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
 	"github.com/gin-gonic/gin"
@@ -47,7 +46,7 @@ func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 		err        error
 	)
 	for {
-		err = wsjson.Read(ctx.Request.Context(), c.conn, &receiveMsg)
+		err = wsjson.Read(ctx, c.conn, &receiveMsg)
 		if err != nil {
 			// 判定连接是否关闭了，正常关闭，不认为是错误
 			var closeErr websocket.CloseError
@@ -65,8 +64,8 @@ func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 		//sendMsg.Content = MsgSrv.FilterSensitive(sendMsg.Content)
 
 		// 解析 content，看看 @ 谁了
-		reg := regexp.MustCompile(`@[^\s@]{2,20}`)
-		sendMsg.Ats = reg.FindAllString(sendMsg.Content, -1)
+		// reg := regexp.MustCompile(`@[^\s@]{2,20}`)
+		// sendMsg.Ats = reg.FindAllString(sendMsg.Content, -1)
 
 		bc.Broadcast(ctx, sendMsg)
 	}
