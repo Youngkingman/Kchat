@@ -3,8 +3,8 @@ package service
 import (
 	"time"
 
+	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
-	"github.com/spf13/cast"
 )
 
 var MsgSrv messageService = &Message{}
@@ -26,12 +26,15 @@ func (ms *Message) NewMessage(chatter *model.Chatter, content, clientTime string
 	message := &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
+		Name:    chatter.Name,
+		Avatar:  chatter.ImageURL,
 		Type:    model.MsgTypeNormal,
-		Content: content,
+		Content: model.ContetnObj{Text: content},
 		MsgTime: time.Now(),
 	}
 	if clientTime != "" {
-		message.ClientSendTime = time.Unix(0, cast.ToInt64(clientTime))
+		// 和前端一样整个解析器format下
+		//message.ClientSendTime = time.Unix(0, cast.ToInt64(clientTime))
 	}
 	return message
 }
@@ -41,11 +44,12 @@ func (ms *Message) NewImageMessage(chatter *model.Chatter, imgUrl, clientTime st
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
 		Type:    model.MsgTypeImage,
-		Content: imgUrl,
+		Content: model.ContetnObj{Text: imgUrl},
 		MsgTime: time.Now(),
 	}
 	if clientTime != "" {
-		message.ClientSendTime = time.Unix(0, cast.ToInt64(clientTime))
+		// 需要format成字符串
+		message.ClientSendTime = time.Now().Format("2006-01-02 15:04:05")
 	}
 	return message
 }
@@ -54,8 +58,10 @@ func (ms *Message) NewWelcomeMessage(chatter *model.Chatter) *model.Message {
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
+		Name:    "System Information",
+		Avatar:  global.AppSetting.SystemAvatar,
 		Type:    model.MsgTypeWelcome,
-		Content: chatter.Name + " Welcome to Kchat",
+		Content: model.ContetnObj{Text: chatter.Name + " Welcome to Kchat"},
 		MsgTime: time.Now(),
 	}
 }
@@ -65,7 +71,7 @@ func (ms *Message) NewChatterEnterMessage(chatter *model.Chatter) *model.Message
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
 		Type:    model.MsgTypeUserEnter,
-		Content: chatter.Name + " enters Kchat",
+		Content: model.ContetnObj{Text: chatter.Name + " enters Kchat"},
 		MsgTime: time.Now(),
 	}
 }
@@ -74,8 +80,10 @@ func (ms *Message) NewChatterLeaveMessage(chatter *model.Chatter) *model.Message
 	return &model.Message{
 		UID:     chatter.UID,
 		RoomID:  chatter.RoomID,
+		Name:    "System Information",
+		Avatar:  global.AppSetting.SystemAvatar,
 		Type:    model.MsgTypeUserLeave,
-		Content: chatter.Name + " leaves Kchat",
+		Content: model.ContetnObj{Text: chatter.Name + " leaves Kchat"},
 		MsgTime: time.Now(),
 	}
 }
@@ -84,8 +92,10 @@ func (ms *Message) NewErrorMessage(content string) *model.Message {
 	return &model.Message{
 		UID:     System.UID,
 		RoomID:  System.RoomID,
+		Name:    "System Information",
+		Avatar:  global.AppSetting.SystemAvatar,
 		Type:    model.MsgTypeUserLeave,
-		Content: content,
+		Content: model.ContetnObj{Text: content},
 		MsgTime: time.Now(),
 	}
 }

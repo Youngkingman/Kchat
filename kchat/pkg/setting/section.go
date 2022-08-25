@@ -14,6 +14,7 @@ type ServerSettingS struct {
 type AppSettingS struct {
 	DefaultPageSize       int
 	DefaultAvatar         string
+	SystemAvatar          string
 	MaxPageSize           int
 	DefaultContextTimeout time.Duration
 	LogSavePath           string
@@ -67,6 +68,11 @@ type ChatRoomSettingS struct {
 	Sensitive       []string
 	OfflineNum      int
 	MessageQueueLen int
+}
+
+type QiniuSettingS struct {
+	AccessKey string
+	SecretKey string
 }
 
 var sections = make(map[string]interface{})

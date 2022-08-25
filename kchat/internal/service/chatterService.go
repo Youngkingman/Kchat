@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
 	"github.com/gin-gonic/gin"
 	"nhooyr.io/websocket"
@@ -42,7 +43,8 @@ func (c *Chatter) CloseMessageChannel() {
 
 func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 	var (
-		receiveMsg map[string]string
+		// receiveMsg map[string]interface{}
+		receiveMsg model.Message
 		err        error
 	)
 	for {
@@ -51,16 +53,18 @@ func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 			// 判定连接是否关闭了，正常关闭，不认为是错误
 			var closeErr websocket.CloseError
 			if errors.As(err, &closeErr) {
+				global.Logger.Errorf(ctx, "Websocket Shutdown with close err %v", err)
 				return nil
 			} else if errors.Is(err, io.EOF) {
+				global.Logger.Errorf(ctx, "Websocket Shutdown with EOF err %v", err)
 				return nil
 			}
-
+			global.Logger.Errorf(ctx, "Websocket Shutdown with err %v and message %v", err, receiveMsg)
 			return err
 		}
 
-		// 内容发送到聊天室
-		sendMsg := MsgSrv.NewMessage(c.Chatter, receiveMsg["content"], receiveMsg["send_time"])
+		// 内容发送到聊天室，日期还得整整
+		sendMsg := MsgSrv.NewMessage(c.Chatter, receiveMsg.Content.Text, receiveMsg.ClientSendTime)
 		//sendMsg.Content = MsgSrv.FilterSensitive(sendMsg.Content)
 
 		// 解析 content，看看 @ 谁了

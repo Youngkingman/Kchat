@@ -13,5 +13,6 @@ var (
 	DatabaseSetting *setting.DatabaseSettingS
 	RedisSetting    *setting.RedisSettingS
 	ChatRoomSetting *setting.ChatRoomSettingS
+	QiniuSetting    *setting.QiniuSettingS
 	Logger          *logger.Logger
 )

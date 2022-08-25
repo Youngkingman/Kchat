@@ -96,7 +96,7 @@ export default {
       let msgObj = {
         room_id: this.getrid(),
         uid: this.uid,
-        date: new Date().getTime(),
+        date: dateFormat("YYYY-mm-dd HH:MM:SS", new Date()),
         text: { text: contentText },
         mine: true,
         type: 0,
@@ -107,7 +107,6 @@ export default {
         let msg = JSON.stringify(msgObj);
         this.websocket.send(msg);
       }
-      msgObj.date = dateFormat("YYYY/mm/dd HH:MM:SS", new Date());
       this.addMsgToList(msgObj);
     },
     addMsgToList(msgObj) {

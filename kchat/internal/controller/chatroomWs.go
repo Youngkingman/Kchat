@@ -56,17 +56,17 @@ func ChatroomWebsocket(c *gin.Context) {
 	go chatter.SendMessage(c)
 	// 3.服务器给用户发送欢迎信息
 	chatter.MessageChannel <- service.MsgSrv.NewWelcomeMessage(chatter.Chatter)
-	// 4. 用户加入该房间广播器，并告知所有人
+	// 4. 用户加入该房间广播器，并告知所有人，我觉得可以暂时去掉
 	broadcaster.ChatterEntering(chatter)
-	global.Logger.Debugf(c, "chatter:%v enter the room %v", chatter.Chatter.Name, rid)
-	msg := service.MsgSrv.NewChatterEnterMessage(chatter.Chatter)
-	broadcaster.Broadcast(c, msg)
+	// global.Logger.Debugf(c, "chatter:%v enter the room %v", chatter.Chatter.Name, rid)
+	// msg := service.MsgSrv.NewChatterEnterMessage(chatter.Chatter)
+	// broadcaster.Broadcast(c, msg)
 	// 5.用户开始接受消息，该函数为循环阻塞函数
 	err = chatter.ReceiveMessage(c, broadcaster)
 
 	// 6. 循环阻塞函数退出，用户离开
 	broadcaster.ChatterLeaving(chatter)
-	msg = service.MsgSrv.NewChatterLeaveMessage(chatter.Chatter)
+	msg := service.MsgSrv.NewChatterLeaveMessage(chatter.Chatter)
 	broadcaster.Broadcast(c, msg)
 	global.Logger.Debugf(c, "chatter:%v leave the room %v", chatter.Chatter.Name, rid)
 
