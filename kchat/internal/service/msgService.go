@@ -34,7 +34,7 @@ func (ms *Message) NewMessage(chatter *model.Chatter, content, clientTime string
 	}
 	if clientTime != "" {
 		// 和前端一样整个解析器format下
-		//message.ClientSendTime = time.Unix(0, cast.ToInt64(clientTime))
+		message.ClientSendTime = time.Now().Format("2006-01-02 15:04:05")
 	}
 	return message
 }

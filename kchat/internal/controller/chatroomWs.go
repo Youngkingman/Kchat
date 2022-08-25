@@ -33,9 +33,9 @@ func ChatroomWebsocket(c *gin.Context) {
 		return
 	}
 	// 检查用户是否有进入房间的权利
-	_, ok = chatroom.ChatRoom.Users[u.UID]
+	v, ok := chatroom.ChatRoom.Users[u.UID]
 	if !ok {
-		global.Logger.Debugf(c, "user %d no right to enter room %d", u.UID, rid)
+		global.Logger.Debugf(c, "user %d no right to enter room %d", v, rid)
 		resp.ToErrorResponse(errcode.ErrorNoRightToAccessRoom.WithDetails(err.Error()))
 		return
 	}
