@@ -85,6 +85,10 @@ const actions = {
     return new Promise((resolve,reject) => {
       signup({ name:name, email:email, password:password, repeatPassword:repeatPassword }).then(response => {
         commit('SET_TOKEN', response.token)
+        const { name, img_url, uid } = response.user 
+        commit('SET_NAME', name)
+        commit('SET_AVATAR', img_url)
+        commit('SET_UID', uid)
         setToken(response.token)
         resolve()
       }).catch(error => {

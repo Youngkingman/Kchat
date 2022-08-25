@@ -39,7 +39,7 @@ func AddChatRoomTest(c *gin.Context) {
 	resp.ToResponse(nil)
 }
 
-func AddUserSToChatRoomTest(c *gin.Context) {
+func AddUserSToChatRoom(c *gin.Context) {
 	var req AddUserSToChatRoomReq
 	resp := app.NewResponse(c)
 	valid, errs := app.BindAndValid(c, &req)

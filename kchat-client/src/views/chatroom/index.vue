@@ -38,6 +38,7 @@ import RightList from "./rightList.vue";
 import { getUsers } from "@/api/chatroom";
 import { getToken } from "@/utils/auth"; // get token from cookie
 import { dateFormat } from "@/utils/dateparse";
+import { mapGetters } from "vuex";
 
 export default {
   components: {

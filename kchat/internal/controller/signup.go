@@ -58,8 +58,14 @@ func Signup(c *gin.Context) {
 		resp.ToErrorResponse(errcode.ErrorTokenGenerateFail)
 		return
 	}
+	// 需要回传一下用户信息用于初次登录时的前端vuex状态缓存
+	u, err = model.GetUserByEmail(c, u.Email)
+	if err != nil {
+		resp.ToErrorResponse(errcode.ErrorGetUserInfoFail)
+		return
+	}
 	// 将token加入redis中
 	err = model.SetToken(u.Email, token)
 	// 回传token
-	resp.ToResponse(gin.H{"token": token})
+	resp.ToResponse(gin.H{"token": token, "user": u})
 }
