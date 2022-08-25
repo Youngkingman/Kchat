@@ -13,20 +13,13 @@ import (
 )
 
 func ChatroomWebsocket(c *gin.Context) {
-	// 对跨域进行处理和一般的跨域不同，需要设置 `InsecureSkipVerify` 选项
-	conn, err := websocket.Accept(c.Writer, c.Request, &websocket.AcceptOptions{InsecureSkipVerify: true})
-	resp := app.NewResponse(c)
-	if err != nil {
-		global.Logger.Errorf(c, "websocket connect fail with err %v", err)
-		resp.ToErrorResponse(errcode.WebsocketConnectFail)
-		return
-	}
 	// 查看jwt实现，该接口必须鉴权再进入,接口以查询形式给予参数
 	u := c.MustGet("user").(*model.User)
 	ridStr := c.Query("rid")
 	rid, err := strconv.Atoi(ridStr)
+	resp := app.NewResponse(c)
 	if err != nil {
-		global.Logger.Errorf(c, "get chatroom info fail with error: %v", err)
+		global.Logger.Errorf(c, "get chatroom info fail with: %v, no rid parsed", err)
 		resp.ToErrorResponse(errcode.TransStringFail.WithDetails(err.Error()))
 		return
 	}
@@ -44,6 +37,15 @@ func ChatroomWebsocket(c *gin.Context) {
 	if !ok {
 		global.Logger.Debugf(c, "user %d no right to enter room %d", u.UID, rid)
 		resp.ToErrorResponse(errcode.ErrorNoRightToAccessRoom.WithDetails(err.Error()))
+		return
+	}
+
+	// 对跨域进行处理和一般的跨域不同，需要设置 `InsecureSkipVerify` 选项
+	// 一个小坑，由于http writer会被websocket库劫持，所以所有校验必须在建立websocket连接之前完成，否则报500的服务器错误
+	conn, err := websocket.Accept(c.Writer, c.Request, &websocket.AcceptOptions{InsecureSkipVerify: true})
+	if err != nil {
+		global.Logger.Errorf(c, "websocket connect fail with err %v", err)
+		resp.ToErrorResponse(errcode.WebsocketConnectFail)
 		return
 	}
 

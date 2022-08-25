@@ -20,8 +20,8 @@ type Message struct {
 	Type           int       `json:"type"`
 	Content        string    `json:"text"`
 	MsgTime        time.Time `json:"msg_time"`
-	ClientSendTime time.Time `json:"client_send_time"`
-	Ats            []string  `json:"ats"` // 消息 @ 了谁
+	ClientSendTime time.Time `json:"date"`
+	// Ats            []string  `json:"ats"` // 消息 @ 了谁
 }
 
 // 暂时不提供聊天消息保存的功能，但是这么设计可以应付业务的扩展，虽然看着有点多余

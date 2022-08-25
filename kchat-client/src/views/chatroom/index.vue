@@ -91,56 +91,75 @@ export default {
     },
     // 输入处理
     bindEnter() {
-      const msg = this.inputMsg;
-      if (!msg) return;
-      const msgObj = {
-        date: dateFormat("YYYY/mm/dd HH:MM:SS", new Date()),
-        text: { text: msg },
+      const contentText = this.inputMsg;
+      if (!contentText) return;
+      let msgObj = {
+        room_id: this.getrid(),
+        uid: this.uid,
+        date: new Date().getTime(),
+        text: { text: contentText },
         mine: true,
+        type: 0,
         name: this.name,
         img: this.avatar,
       };
+      if (this.websocket !== null) {
+        let msg = JSON.stringify(msgObj);
+        this.websocket.send(msg);
+      }
+      msgObj.date = dateFormat("YYYY/mm/dd HH:MM:SS", new Date());
+      this.addMsgToList(msgObj);
+    },
+    addMsgToList(msgObj) {
+      // 用于 at 人功能的实现预留
       this.list.push(msgObj);
     },
-    addMsgToList(msg) {},
-    // websocket 相关处理!important
-    joinRoomInit() {
+    // websocket 相关处理
+    initWebsocket() {
       // 用户进入时初始化操作
       if (!"WebSocket" in window) {
         alert("WebSocket is not supported on you device, Sorry");
       }
-      let host = location.host;
       let token = getToken();
-      const link = "ws://" + host + "/chat/ws" + "?token=" + token;
+      let WEB_SOCKET_API = "ws://localhost:8000"; //以后再配置
+      const link =
+        WEB_SOCKET_API + "/chat/ws" + "?token=" + token + "&rid=" + this.getrid();
       this.websocket = new WebSocket(link);
-      this.registWsHandler(this.websocket);
+      console.log("init websocket at " + link, this.websocket);
+      this.websocket.onopen = this.websocketonopen;
+      this.websocket.onerror = this.websocketonerror;
+      this.websocket.onmessage = this.websocketonmessage;
+      this.websocket.onclose = this.websocketonclose;
     },
-    registWsHandler(ws) {
-      // 注册与处理websocket相关的回调
-      ws.onopen = () => {
-        console.log("ws connected");
-      };
-      ws.onmessage = (evt) => {
-        let data = JSON.parse(evt.data);
-        // 这部分预留为在线用户处理
-        switch (data.type) {
-          case 1: // 用户进入，用户后续处理
-            // code block
-            break;
-          case 2: // 用户进入的欢迎信息
-            this.fetchUsers(); // maybe new fetchChatters
-            break;
-          case 3: // 用户离开的信息
-            this.fetchUsers(); // maybe new fetchChatters
-            break;
-          case 4: // 错误消息
-            break;
-          case 5: // 图片数据
-            break;
-          default:
-        }
-        addMsgToList(data);
-      };
+    websocketonopen() {
+      console.log("websocket connect success!");
+    },
+    websocketonerror(evt) {
+      console.log("websocket connect error!", evt);
+    },
+    websocketonclose(evt) {
+      console.log("connection closed (" + evt.code + ")");
+    },
+    websocketonmessage(evt) {
+      let data = JSON.parse(evt.data);
+      // 这部分预留为在线用户处理
+      switch (data.type) {
+        case 1: // 用户进入，用户后续处理
+          // code block
+          break;
+        case 2: // 用户进入的欢迎信息
+          this.fetchUsers(); // maybe new fetchChatters
+          break;
+        case 3: // 用户离开的信息
+          this.fetchUsers(); // maybe new fetchChatters
+          break;
+        case 4: // 错误消息
+          break;
+        case 5: // 图片数据
+          break;
+        default:
+      }
+      this.addMsgToList(data);
     },
     //工具栏相关回调函数
     toolEvent(type, obj) {
@@ -154,11 +173,11 @@ export default {
     },
   },
   created() {
-    // 要不还是几个按钮，vue生命周期懒得深入了
-    this.joinRoomInit();
+    this.fetchUsers();
+    // 创建页面时初始化建立websocket
+    this.initWebsocket();
   },
   mounted() {
-    this.fetchUsers();
     // const img = "https://www.baidu.com/img/flexible/logo/pc/result.png";
     // const list = [
     //   {
