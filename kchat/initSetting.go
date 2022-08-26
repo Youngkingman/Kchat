@@ -144,7 +144,7 @@ func InitSetting() {
 	// 	log.Fatalf("init.setupTracer err: %v", err)
 	// }
 	// 服务器启动的时候加载所有房间
-	err = service.LoadChatRoom()
+	err = service.LoadAllChatRoom()
 	if err != nil {
 		log.Fatalf("init.LoadChatRoom err: %v", err)
 	}

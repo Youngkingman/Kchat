@@ -25,3 +25,11 @@ export function getUsers(rid) {
     params: { rid }
   })
 }
+
+export function checkRoomAccess(rid) {
+  return request({
+    url: '/chat/checkroomaccess',
+    method: 'get',
+    params: { rid }
+  })
+}

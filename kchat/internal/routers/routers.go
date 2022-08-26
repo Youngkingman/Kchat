@@ -41,6 +41,7 @@ func NewRouter() *gin.Engine {
 		chat.GET("/chatterlist", controller.ChatRoomChatterList)
 		chat.GET("/roomuserlist", controller.ChatroomUserList)
 		chat.PUT("/addchatroomuser", controller.AddUserSToChatRoom)
+		chat.GET("/checkroomaccess", controller.CheckRightForWSConn)
 		// The following api are under further establishment
 		chat.POST("/addchatroom", controller.AddChatRoomTest)
 		chat.GET("/getallinfo", controller.GetAllChatRoomTest)

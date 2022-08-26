@@ -6,6 +6,7 @@ import (
 
 	"github.com/Youngkingman/Kchat/kchat/global"
 	"github.com/Youngkingman/Kchat/kchat/internal/model"
+	"github.com/Youngkingman/Kchat/kchat/internal/service"
 	"github.com/Youngkingman/Kchat/kchat/pkg/app"
 	"github.com/Youngkingman/Kchat/kchat/pkg/errcode"
 	"github.com/gin-gonic/gin"
@@ -51,6 +52,13 @@ func AddUserSToChatRoom(c *gin.Context) {
 	err := model.AddUserSToChatRoom(c, req.Rid, req.Uids)
 	if err != nil {
 		global.Logger.Errorf(c, "add chatroom fail with error: %v", err)
+		resp.ToErrorResponse(errcode.ErrorAddChatRoomFail.WithDetails(err.Error()))
+		return
+	}
+	// 成功之后要对现有的的房间用户进行更新
+	err = service.LoadChatRoom(req.Rid)
+	if err != nil {
+		global.Logger.Errorf(c, "load chatroom fail with error: %v", err)
 		resp.ToErrorResponse(errcode.ErrorAddChatRoomFail.WithDetails(err.Error()))
 		return
 	}

@@ -35,10 +35,11 @@
 <script>
 import KChat from "./kchat.vue";
 import RightList from "./rightList.vue";
-import { getUsers } from "@/api/chatroom";
+import { getUsers, checkRoomAccess } from "@/api/chatroom";
 import { getToken } from "@/utils/auth"; // get token from cookie
 import { dateFormat } from "@/utils/dateparse";
 import { mapGetters } from "vuex";
+import { Message } from "element-ui";
 
 export default {
   components: {
@@ -82,7 +83,7 @@ export default {
       });
     },
     getrid() {
-      // 简单判断下，以后再说
+      // 简单判断下，以后再说,route是局部的,router是全局的
       let roomName = this.$route.name;
       if (roomName === "Chatroom1") {
         return 1;
@@ -160,6 +161,14 @@ export default {
       }
       this.addMsgToList(data);
     },
+    // 保活
+    keepAlive() {
+      // 表明异常退出了
+      if (this.websocket.readyState == WebSocket.CLOSED && this.joined) {
+        console.log("reconnect");
+        this.initWebsocket();
+      }
+    },
     //工具栏相关回调函数
     toolEvent(type, obj) {
       console.log("tools", type, obj);
@@ -172,11 +181,25 @@ export default {
     },
   },
   created() {
-    this.fetchUsers();
-    // 创建页面时初始化建立websocket
-    this.initWebsocket();
+    let rid = this.getrid();
+    // 校验是否能够进入聊天室
+    checkRoomAccess(rid).then((res) => {
+      console.log(res);
+      if (res.canenter) {
+        this.fetchUsers();
+        this.initWebsocket();
+      } else {
+        Message({
+          message: "You can't enter now. Signup for this room first",
+          type: "error",
+          duration: 5 * 1000,
+        });
+        this.$router.push("/home");
+      }
+    });
   },
   mounted() {
+    // setInterval(this.keepAlive, 10000); //有毒，再说
     // const img = "https://www.baidu.com/img/flexible/logo/pc/result.png";
     // const list = [
     //   {

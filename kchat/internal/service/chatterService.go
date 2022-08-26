@@ -43,7 +43,6 @@ func (c *Chatter) CloseMessageChannel() {
 
 func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 	var (
-		// receiveMsg map[string]interface{}
 		receiveMsg model.Message
 		err        error
 	)
@@ -63,7 +62,6 @@ func (c *Chatter) ReceiveMessage(ctx *gin.Context, bc *broadcaster) error {
 			return err
 		}
 
-		// 内容发送到聊天室，日期还得整整
 		sendMsg := MsgSrv.NewMessage(c.Chatter, receiveMsg.Content.Text, receiveMsg.ClientSendTime)
 		//sendMsg.Content = MsgSrv.FilterSensitive(sendMsg.Content)
 

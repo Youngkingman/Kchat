@@ -9,29 +9,29 @@ import (
 type broadcaster struct {
 	// 所有 channel 统一管理，可以避免外部乱用
 	RoomID          int
-	chatters        map[string]*Chatter //在线用户信息
-	enteringChannel chan *Chatter
-	leavingChannel  chan *Chatter
-	messageChannel  chan *model.Message
+	chatters        map[int]*Chatter    //在线用户信息
+	enteringChannel chan *Chatter       //处理正在进入用户的管道
+	leavingChannel  chan *Chatter       //处理正在离开用户的管道
+	messageChannel  chan *model.Message //需要向所有用户广播的信息管道
 
 	// 判断该昵称用户是否可进入聊天室（重复与否）：true 能，false 不能，这一对必须无缓冲
-	checkChatterChannel      chan string
+	checkChatterChannel      chan int
 	checkChatterCanInChannel chan bool
 
 	// 获取用户列表
 	requestChattersChannel chan struct{}
-	chattersChannel        chan []*Chatter
+	chattersChannel        chan []*Chatter //当前在线用户信息的发送
 }
 
 func NewBroadCast(rid int) *broadcaster {
 	return &broadcaster{
-		chatters: make(map[string]*Chatter),
+		chatters: make(map[int]*Chatter),
 
 		enteringChannel: make(chan *Chatter),
 		leavingChannel:  make(chan *Chatter),
 		messageChannel:  make(chan *model.Message, global.ChatRoomSetting.MessageQueueLen),
 
-		checkChatterChannel:      make(chan string),
+		checkChatterChannel:      make(chan int),
 		checkChatterCanInChannel: make(chan bool),
 
 		requestChattersChannel: make(chan struct{}),
@@ -46,12 +46,12 @@ func (b *broadcaster) Start() {
 		select {
 		case chatter := <-b.enteringChannel:
 			// 新用户进入
-			b.chatters[chatter.Chatter.Name] = chatter
+			b.chatters[chatter.Chatter.UID] = chatter
 
 			//OfflineProcessor.Send(user)
 		case chatter := <-b.leavingChannel:
 			// 用户离开
-			delete(b.chatters, chatter.Chatter.Name)
+			delete(b.chatters, chatter.Chatter.UID)
 			// 避免 goroutine 泄露
 			chatter.CloseMessageChannel()
 		case msg := <-b.messageChannel:
@@ -95,8 +95,8 @@ func (b *broadcaster) Broadcast(ctx *gin.Context, msg *model.Message) {
 	b.messageChannel <- msg
 }
 
-func (b *broadcaster) CanEnterRoom(nickname string) bool {
-	b.checkChatterChannel <- nickname
+func (b *broadcaster) CanEnterRoom(uid int) bool {
+	b.checkChatterChannel <- uid
 
 	return <-b.checkChatterCanInChannel
 }

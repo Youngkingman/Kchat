@@ -14,13 +14,15 @@ import (
 
 func ChatroomWebsocket(c *gin.Context) {
 	// 查看jwt实现，该接口必须鉴权再进入,接口以查询形式给予参数
+	// 相关的status code see https://pkg.go.dev/nhooyr.io/websocket#StatusCode
 	u := c.MustGet("user").(*model.User)
 	ridStr := c.Query("rid")
 	rid, err := strconv.Atoi(ridStr)
-	resp := app.NewResponse(c)
+	// 对跨域进行处理和一般的跨域不同，需要设置 `InsecureSkipVerify` 选项
+	conn, err := websocket.Accept(c.Writer, c.Request, &websocket.AcceptOptions{InsecureSkipVerify: true})
 	if err != nil {
 		global.Logger.Errorf(c, "get chatroom info fail with: %v, no rid parsed", err)
-		resp.ToErrorResponse(errcode.TransStringFail.WithDetails(err.Error()))
+		conn.Close(websocket.StatusInternalError, "Read from client error")
 		return
 	}
 	// 查看对应房间是否存在,此时需要控制并发
@@ -29,23 +31,15 @@ func ChatroomWebsocket(c *gin.Context) {
 	chatroom, ok := service.ChatRoomMap.Get(rid)
 	if !ok {
 		global.Logger.Debugf(c, "can't find chat room with rid %v", rid)
-		resp.ToErrorResponse(errcode.ErrorGetChatRoomInfoFail.WithDetails(err.Error()))
+		conn.Close(websocket.StatusNormalClosure, "No Room Id")
 		return
 	}
 	// 检查用户是否有进入房间的权利
-	v, ok := chatroom.ChatRoom.Users[u.UID]
+	ok = chatroom.ChatRoom.Users[u.UID]
 	if !ok {
-		global.Logger.Debugf(c, "user %d no right to enter room %d", v, rid)
-		resp.ToErrorResponse(errcode.ErrorNoRightToAccessRoom.WithDetails(err.Error()))
-		return
-	}
-
-	// 对跨域进行处理和一般的跨域不同，需要设置 `InsecureSkipVerify` 选项
-	// 一个小坑，由于http writer会被websocket库劫持，所以所有校验必须在建立websocket连接之前完成，否则报500的服务器错误
-	conn, err := websocket.Accept(c.Writer, c.Request, &websocket.AcceptOptions{InsecureSkipVerify: true})
-	if err != nil {
-		global.Logger.Errorf(c, "websocket connect fail with err %v", err)
-		resp.ToErrorResponse(errcode.WebsocketConnectFail)
+		global.Logger.Debugf(c, "user %d no right to enter room %d", u.UID, rid)
+		//	resp.ToErrorResponse(errcode.ErrorNoRightToAccessRoom.WithDetails(err.Error()))
+		conn.Close(websocket.StatusNormalClosure, "No Right to Access Room")
 		return
 	}
 
@@ -76,4 +70,26 @@ func ChatroomWebsocket(c *gin.Context) {
 		global.Logger.Errorf(c, "read from client error: %v", err)
 		conn.Close(websocket.StatusInternalError, "Read from client error")
 	}
+}
+
+func CheckRightForWSConn(c *gin.Context) {
+	// 用于在进入websocket连接前判断用户有无权限，无权限则直接取消页面渲染，重复一遍ws不过是http版本
+	u := c.MustGet("user").(*model.User)
+	ridStr := c.Query("rid")
+	rid, err := strconv.Atoi(ridStr)
+	resp := app.NewResponse(c)
+	chatroom, ok := service.ChatRoomMap.Get(rid)
+	if !ok {
+		global.Logger.Debugf(c, "can't find chat room with rid %v", rid)
+		resp.ToErrorResponse(errcode.ErrorGetChatRoomInfoFail.WithDetails(err.Error()))
+		return
+	}
+	// 检查用户是否有进入房间的权利
+	ok = chatroom.ChatRoom.Users[u.UID]
+	if !ok {
+		global.Logger.Debugf(c, "user %d no right to enter room %d", u.UID, rid)
+		resp.ToResponse(gin.H{"canenter": false})
+		return
+	}
+	resp.ToResponse(gin.H{"canenter": true})
 }
