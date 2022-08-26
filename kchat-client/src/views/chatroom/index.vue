@@ -184,7 +184,6 @@ export default {
     let rid = this.getrid();
     // 校验是否能够进入聊天室
     checkRoomAccess(rid).then((res) => {
-      console.log(res);
       if (res.canenter) {
         this.fetchUsers();
         this.initWebsocket();
@@ -199,7 +198,7 @@ export default {
     });
   },
   mounted() {
-    // setInterval(this.keepAlive, 10000); //有毒，再说
+    setInterval(this.keepAlive, 10000);
     // const img = "https://www.baidu.com/img/flexible/logo/pc/result.png";
     // const list = [
     //   {
@@ -210,6 +209,11 @@ export default {
     //     img: "/image/one.jpeg",
     //   }
   },
+  // deactivated() {
+  //   if (this.websocket) {
+  //     this.websocket.close();
+  //   }
+  // },
 };
 </script>
 

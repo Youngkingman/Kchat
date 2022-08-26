@@ -57,18 +57,18 @@ export const constantRoutes = [
   {
     path: '/chatrooms',
     component: Layout,
-    redirect: '/chatrooms/1',
+    redirect: '/chatroom1',
     name: 'Chatrooms',
     meta: { title: 'Chatrooms', icon: 'meeting' },
     children: [
       {
-        path: '1',
+        path: 'chatroom1',
         name: 'Chatroom1',
         component: () => import('@/views/chatroom/index'),
         meta: { title: 'Chatroom1', icon: 'chat' },
       },
       {
-        path: '2',
+        path: 'chatroom2',
         name: 'Chatroom2',
         component: () => import('@/views/chatroom/index'),
         meta: { title: 'Chatroom2', icon: 'chat' },
