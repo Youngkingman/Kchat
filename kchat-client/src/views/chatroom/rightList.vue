@@ -10,12 +10,7 @@
     <div class="userList">
       <div>{{ info.listTip }} ({{ dataList.length }})</div>
       <div>
-        <el-input
-          :placeholder="info.filterTip"
-          v-model="filter"
-          clearable
-          size="mini"
-        />
+        <el-input :placeholder="info.filterTip" v-model="filter" clearable size="mini" />
       </div>
       <div class="listBox">
         <div class="scrollBox" ref="scrollBox">
@@ -125,8 +120,8 @@ export default {
       left: 50%;
       transform: translateX(-50%);
     }
-    .annoucement{
-      text-align: center; 
+    .annoucement {
+      text-align: center;
       font-size: 20px;
     }
   }
