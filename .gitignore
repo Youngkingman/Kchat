@@ -1,5 +1,5 @@
 config.yaml
+docker-compose.yml
 *.log
 \.VSCodeCounter
 .vscode
-docker-compose.yml
