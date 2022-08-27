@@ -62,7 +62,7 @@ services:
     expose:
       - "3000"
     ports:
-      - "3000:3000"
+      - "3000:9528"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.account-client.rule=Host(`malcorp.test`) && PathPrefix(`/account`)"
