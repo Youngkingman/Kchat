@@ -3,11 +3,15 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+const host = "localhost:8080/api" // will be kchat for online version
+export const WEB_SOCKET_API = "ws://"+host
+export const HTTP_HOST = "http://"+host
+
 // create an axios instance
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  baseURL: 'http://localhost:8000', //实际部署的时候设为'/'让nginx去处理?
+  baseURL: HTTP_HOST, //实际部署的时候设为'/'让nginx去处理?
   timeout: 5000 // request timeout
 })
 

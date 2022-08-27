@@ -75,9 +75,9 @@ func setupSetting() error {
 	global.JWTSetting.Expire *= time.Second
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
-	if port != "" {
-		global.ServerSetting.HttpPort = port
-	}
+	// if port != "" {
+	// 	global.ServerSetting.HttpPort = port
+	// }
 	if runMode != "" {
 		global.ServerSetting.RunMode = runMode
 	}

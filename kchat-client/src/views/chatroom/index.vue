@@ -40,6 +40,7 @@ import { getToken } from "@/utils/auth"; // get token from cookie
 import { dateFormat } from "@/utils/dateparse";
 import { mapGetters } from "vuex";
 import { Message } from "element-ui";
+import { WEB_SOCKET_API } from "@/utils/request";
 
 export default {
   components: {
@@ -121,7 +122,6 @@ export default {
         alert("WebSocket is not supported on you device, Sorry");
       }
       let token = getToken();
-      let WEB_SOCKET_API = "ws://localhost:8000"; //以后再配置
       const link =
         WEB_SOCKET_API + "/chat/ws" + "?token=" + token + "&rid=" + this.getrid();
       this.websocket = new WebSocket(link);
