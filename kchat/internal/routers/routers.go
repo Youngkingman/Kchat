@@ -21,9 +21,10 @@ func NewRouter() *gin.Engine {
 		r.Use(middleware.AccessLog())
 		r.Use(middleware.Recovery())
 	}
-	tracficPrefix := r.Group("/api")
-
-	home := tracficPrefix.Group("/home")
+	// 引入流量控制，给出特定的出口
+	traficPrefix := r.Group("/api")
+	traficPrefix.GET("/ping", controller.Pong)
+	home := traficPrefix.Group("/home")
 	home.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
 	home.Use(middleware.Translations())
 	{
@@ -33,8 +34,7 @@ func NewRouter() *gin.Engine {
 		home.POST("/signin", controller.Signin)
 		home.POST("/login", controller.Signin) //一样的前端以后再改
 	}
-	// websocket相关路由
-	chat := tracficPrefix.Group("/chat")
+	chat := traficPrefix.Group("/chat")
 	chat.Use(middleware.AuthJWT())
 	{
 		chat.GET("/ws", controller.ChatroomWebsocket)

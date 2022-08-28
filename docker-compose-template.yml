@@ -1,0 +1,79 @@
+version: "3.8"
+services:
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.2
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedByDefault=false"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+  mysql:
+    image: mysql:5.7.39
+    volumes:
+      - /apps/mysql/mydir:/mydir
+      - mysqldata_account:/var/lib/mysql
+      - /apps/mysql/conf/my.cnf:/etc/my.cnf
+      - /apps/mysql/source:/docker-entrypoint-initdb.d
+    environment:
+      - "MYSQL_ROOT_PASSWORD=mysqlroot"
+      - "MYSQL_DATABASE=kchat_service"
+      - "TZ=Asia/Shanghai"
+    ports:
+      # main：container
+      - 3306:3306
+  redis:
+    image: "redis:6.2.7"
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --port 6379 --requirepass kchatredis  --appendonly yes
+    volumes:
+      - "redisdata:/data"
+  kchat:
+    build:
+      context: ./kchat
+      target: builder
+    image: kchat
+    expose:
+      - "8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kchat.rule=Host(`localhost`) && PathPrefix(`/api`)"
+    volumes:
+      - ./kchat:/go/src/app
+    # have to use $$ (double-dollar) so docker doesn't try to substitute a variable
+    depends_on:
+      - mysql
+      - redis
+      - reverse-proxy
+    # command: reflex -r "\.go$$" -s -- sh -c "go run ./"
+    command: sh -c "./kchat"
+  kchat-client:
+    build:
+      context: ./kchat-client
+    image: kchat-client # if we don't give image name, traefik won't create router 🤷‍♂️
+    expose:
+      - "3000"
+    ports:
+      - "3000:9528"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kchat-client.rule=Host(`localhost`) && PathPrefix(`/kchat`)"
+    volumes:
+      - ./kchat-client:/app
+      - /app/node_modules #avoid overwriting node_modules
+    depends_on: 
+      - reverse-proxy   
+      - kchat 
+volumes:
+  mysqldata_account:
+  redisdata:
