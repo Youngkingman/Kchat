@@ -22,4 +22,4 @@ WORKDIR /root/
 COPY --from=builder /go/src/app/run .
 
 EXPOSE 8000
-CMD ["./run"]
+CMD ["./run" ]

@@ -33,7 +33,7 @@ func NewRouter() *gin.Engine {
 		home.POST("/signin", controller.Signin)
 		home.POST("/login", controller.Signin) //一样的前端以后再改
 	}
-	chat := tracficPrefix.Group("/chat")
+	chat := traficPrefix.Group("/chat")
 	chat.Use(middleware.AuthJWT())
 	{
 		chat.GET("/ws", controller.ChatroomWebsocket)
