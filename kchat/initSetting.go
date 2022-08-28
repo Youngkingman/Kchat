@@ -78,9 +78,9 @@ func setupSetting() error {
 	// if port != "" {
 	// 	global.ServerSetting.HttpPort = port
 	// }
-	if runMode != "" {
-		global.ServerSetting.RunMode = runMode
-	}
+	// if runMode != "" {
+	// 	global.ServerSetting.RunMode = runMode
+	// }
 
 	return nil
 }
