@@ -10,7 +10,7 @@ export const WEB_SOCKET_API = "ws://"+host
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://' + host, // url = base url + request url
+  baseURL: host, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   // baseURL: HTTP_HOST, //实际部署的时候设为'/'让nginx去处理?
   timeout: 5000 // request timeout
