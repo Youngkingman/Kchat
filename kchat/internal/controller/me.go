@@ -46,3 +46,8 @@ func MeRedis(c *gin.Context) {
 	}
 	req.ToResponse(val)
 }
+
+func Pong(c *gin.Context) {
+	req := app.NewResponse(c)
+	req.ToResponse("pong")
+}

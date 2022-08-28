@@ -23,6 +23,7 @@ func NewRouter() *gin.Engine {
 	}
 	// 引入流量控制，给出特定的出口
 	traficPrefix := r.Group("/api")
+	traficPrefix.GET("/ping", controller.Pong)
 	home := traficPrefix.Group("/home")
 	home.Use(middleware.ContextTimeout(global.AppSetting.DefaultContextTimeout))
 	home.Use(middleware.Translations())
