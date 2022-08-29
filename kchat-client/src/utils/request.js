@@ -5,12 +5,21 @@ import { getToken } from '@/utils/auth'
 
 const host = process.env.VUE_APP_BASE_API 
 export const WEB_SOCKET_API = "ws://"+host
+<<<<<<< HEAD
+=======
+
+// export const HTTP_HOST = "http://"+host
+>>>>>>> 445bc7ac51f4cb91c8da21fa1508854daa18f0f4
 
 // create an axios instance
 const service = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: host, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
+<<<<<<< HEAD
   baseURL: host, //实际部署的时候设为'/'让nginx去处理?
+=======
+  // baseURL: HTTP_HOST, //实际部署的时候设为'/'让nginx去处理?
+>>>>>>> 445bc7ac51f4cb91c8da21fa1508854daa18f0f4
   timeout: 5000 // request timeout
 })
 
